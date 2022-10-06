@@ -9,7 +9,7 @@ createTable.o: createTable.c
 mensagensErro.o: mensagensErro.c
 	gcc -o mensagensErro.o -c mensagensErro.c
 
-programaTrab: main.o createTable.o
+programaTrab: main.o createTable.o mensagensErro.o
 	gcc -o programaTrab main.o createTable.o mensagensErro.o
 
 run:
@@ -17,4 +17,4 @@ run:
 
 clean:
 	rm -f *.o
-	rm -f exec
+	rm -f programaTrab
