@@ -1,11 +1,14 @@
 #include <stdio.h>
+#include "arquivos.h"
 #include "createTable.h"
 
 int main(){
     FILE* in = fopen("../in/topologiaRede.csv","r");
     FILE* out = fopen("../out/topologiaRede.bin","wb");
-    createTable(in,out);
 
-    fclose(in);
-    fclose(out);
+    const char nomeEntrada[32] = "../in/topologiaRede.csv";
+    const char nomeSaida[32] = "../out/topologiaRede.bin";
+
+    createTable(nomeEntrada, nomeSaida);
+    
 }

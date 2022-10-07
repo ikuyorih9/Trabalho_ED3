@@ -3,6 +3,6 @@
 
 #include <stdio.h>
 
-void createTable(FILE* in, FILE* out);
+void createTable(const char * nomeEntrada, const char * nomeSaida);
 
 #endif

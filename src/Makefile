@@ -9,8 +9,11 @@ createTable.o: createTable.c
 mensagensErro.o: mensagensErro.c
 	gcc -o mensagensErro.o -c mensagensErro.c
 
-programaTrab: main.o createTable.o mensagensErro.o
-	gcc -o programaTrab main.o createTable.o mensagensErro.o
+arquivos.o:arquivos.c
+	gcc -o arquivos.o -c arquivos.c
+
+programaTrab: main.o createTable.o mensagensErro.o arquivos.o
+	gcc -o programaTrab main.o createTable.o mensagensErro.o arquivos.o
 
 run:
 	./programaTrab
