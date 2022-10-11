@@ -4,12 +4,17 @@
 #define TAM_PAG 960
 #define TAM_REG_DADOS 64
 #define TAM_REG_CAB 20
-#define TAM_REG_DADOS_FIX 23
+#define TAM_REG_DADOS_FIX 20
 
 #include <stdio.h>
 
 void binarioNaTela(const char *nomeArquivoBinario);
 int retornaNumPaginasDisco(int numRegistros, FILE * arquivo);
+char * retornaCampoLinha(char * linha, int numCampo);
+
+char * retornaCampoRegistroString(int posCursor, int numBytes,FILE * arquivo);
+int retornaCampoRegistroInteiro(int posCursor, FILE * arquivo);
+
 void mudarCampoString(int posCursor, char * campo, int tamCampo, FILE * arquivo);
 void mudarCampoInteiro(int posCursor, int campo, FILE * arquivo);
 void alocarRegistroCabecalho(char status,
@@ -32,7 +37,7 @@ int alocarRegistroDados(int removido,
                         FILE * out);
 
 void insereRegistroDados(int posCursor,
-                              int removido,
+                              char removido,
                               int encadeamento,
                               int idConecta, 
                               char *siglaPais, 

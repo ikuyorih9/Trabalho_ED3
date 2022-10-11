@@ -4,31 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char * retornaCampo(char * linha, int numCampo){
-    char * campo = malloc(32*sizeof(char));
-    int contCampo = 0;
-    int j = 0;
-
-    for(int i = 0; linha[i] != '\0' && linha[i] != '\n'; i++){
-        if(linha[i] != ','){
-            campo[j] = linha[i];
-            j++;
-        }
-        else{
-            if(contCampo == numCampo){
-                campo[j] = '\0';
-                break;
-            }
-            else
-                j = 0;
-            contCampo++;
-        }
-            
-    }
-
-    return campo;
-}
-
 void createTable(const char * nomeEntrada, const char * nomeSaida){
     FILE * in = fopen(nomeEntrada, "r");
     FILE * out = fopen(nomeSaida, "wb");
@@ -55,20 +30,20 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
         char * campoRetornado;
 
         int idConecta;
-        campoRetornado = retornaCampo(linha, 0);
+        campoRetornado = retornaCampoLinha(linha, 0);
         idConecta = atoi(campoRetornado);
-        char * siglaPais = retornaCampo(linha, 3);
-        campoRetornado = retornaCampo(linha,4);
+        char * siglaPais = retornaCampoLinha(linha, 3);
+        campoRetornado = retornaCampoLinha(linha,4);
         float idPoPsConectado = atof(campoRetornado);
-        char * unidadeMedida = retornaCampo(linha, 5);
-        campoRetornado = retornaCampo(linha,6);
+        char * unidadeMedida = retornaCampoLinha(linha, 5);
+        campoRetornado = retornaCampoLinha(linha,6);
         float velocidade = atof(campoRetornado);
-        char * nomePoPs = retornaCampo(linha, 1);
-        char * nomePais = retornaCampo(linha, 2);
+        char * nomePoPs = retornaCampoLinha(linha, 1);
+        char * nomePais = retornaCampoLinha(linha, 2);
 
         int posCursor = (numRegistros * TAM_REG_DADOS) + TAM_PAG;
 
-        insereRegistroDados(posCursor,0,-1,idConecta,siglaPais,idPoPsConectado,unidadeMedida,velocidade,nomePoPs,nomePais,out);
+        insereRegistroDados(posCursor,'0',-1,idConecta,siglaPais,idPoPsConectado,unidadeMedida,velocidade,nomePoPs,nomePais,out);
         numRegistros++;
 
         free(campoRetornado);
