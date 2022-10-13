@@ -10,6 +10,11 @@
 
 void binarioNaTela(const char *nomeArquivoBinario);
 int retornaNumPaginasDisco(int numRegistros, FILE * arquivo);
+char * retornaCampoLinha(char * linha, int numCampo);
+
+char * retornaCampoRegistroString(int posCursor, int numBytes,FILE * arquivo);
+int retornaCampoRegistroInteiro(int posCursor, FILE * arquivo);
+
 void mudarCampoString(int posCursor, char * campo, int tamCampo, FILE * arquivo);
 void mudarCampoInteiro(int posCursor, int campo, FILE * arquivo);
 void alocarRegistroCabecalho(char status,

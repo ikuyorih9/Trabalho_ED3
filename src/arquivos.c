@@ -46,7 +46,51 @@ int retornaTamanhoCampo(char * campo){
     return tamanho;
 }
 
+char * retornaCampoLinha(char * linha, int numCampo){
+    char * campo = malloc(32*sizeof(char));
+    int contCampo = 0;
+    int j = 0;
 
+    for(int i = 0; linha[i] != '\0' && linha[i] != '\n'; i++){
+        if(linha[i] != ','){
+            campo[j] = linha[i];
+            j++;
+        }
+        else{
+            if(contCampo == numCampo){
+                campo[j] = '\0';
+                break;
+            }
+            else
+                j = 0;
+            contCampo++;
+        }
+            
+    }
+
+    return campo;
+}
+
+char * retornaCampoRegistroString(int posCursor, int numBytes,FILE * arquivo){
+    char * campo = malloc(sizeof(char)*(numBytes+1));
+
+    fseek(arquivo, posCursor, SEEK_SET);
+    int i;
+    for(i = 0; i < numBytes; i++){
+        fread(&(campo[i]), sizeof(char), 1, arquivo);
+    }
+
+    campo[i] = '\0';
+    
+    return campo;
+}
+
+int retornaCampoRegistroInteiro(int posCursor, FILE * arquivo){
+    int campo;
+    fseek(arquivo, posCursor, SEEK_SET);
+    fread(&campo, sizeof(int), 1, arquivo);
+    return campo;
+}
 
 void insereLixoRegistro(FILE * out, int nBytesLidos, int tamRegistro){
     char lixo = '$';
