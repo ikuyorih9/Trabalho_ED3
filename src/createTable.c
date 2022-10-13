@@ -21,9 +21,9 @@ char * retornaCampo(char * linha, int numCampo){
             }
             else
                 j = 0;
+
             contCampo++;
-        }
-            
+        }    
     }
 
     return campo;
@@ -68,7 +68,7 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
 
         int posCursor = (numRegistros * TAM_REG_DADOS) + TAM_PAG;
 
-        insereRegistroDados(posCursor,0,-1,idConecta,siglaPais,idPoPsConectado,unidadeMedida,velocidade,nomePoPs,nomePais,out);
+        insereRegistroDados(posCursor,'0',-1,idConecta,siglaPais,idPoPsConectado,unidadeMedida,velocidade,nomePoPs,nomePais,out);
         numRegistros++;
 
         free(campoRetornado);

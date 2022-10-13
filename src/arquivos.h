@@ -4,7 +4,7 @@
 #define TAM_PAG 960
 #define TAM_REG_DADOS 64
 #define TAM_REG_CAB 20
-#define TAM_REG_DADOS_FIX 23
+#define TAM_REG_DADOS_FIX 20
 
 #include <stdio.h>
 
@@ -32,7 +32,7 @@ int alocarRegistroDados(int removido,
                         FILE * out);
 
 void insereRegistroDados(int posCursor,
-                              int removido,
+                              char removido,
                               int encadeamento,
                               int idConecta, 
                               char *siglaPais, 

@@ -94,7 +94,7 @@ int alocarRegistroDados(int removido,
                         FILE * out){
     
     int a;
-    fwrite(&removido, sizeof(int), 1, out);
+    fwrite(&removido, sizeof(char), 1, out);
     fwrite(&encadeamento, sizeof(int), 1, out);
     fwrite(&idConecta, sizeof(int), 1, out);
     fwrite(siglaPais, sizeof(char), 2, out);
@@ -115,7 +115,7 @@ int alocarRegistroDados(int removido,
 }
 
 void insereRegistroDados(int posCursor,
-                              int removido,
+                              char removido,
                               int encadeamento,
                               int idConecta, 
                               char *siglaPais, 
@@ -128,7 +128,7 @@ void insereRegistroDados(int posCursor,
 
     fseek(arquivo, posCursor, SEEK_SET);
 
-    fwrite(&removido, sizeof(int), 1, arquivo);
+    fwrite(&removido, sizeof(char), 1, arquivo);
     fwrite(&encadeamento, sizeof(int), 1, arquivo);
     fwrite(&idConecta, sizeof(int), 1, arquivo);
     fwrite(siglaPais, sizeof(char), 2, arquivo);
