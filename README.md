@@ -7,6 +7,8 @@ Desenvolvido por:
 
 # Funcionalidades
 ## **1. CREATE TABLE:** 
+*_por: Hugo Nakamura._*
+
 Comando para criar uma nova tabela. Recebe como entradas o nome dos arquivos CSV e binário. Após a criação da tabela (de cabeçalho e de dados), o código imprime o conteúdo binário do arquivo de saída.
   * **1.1. Entrada:**
     * Arquivo CSV dos dados;
@@ -17,6 +19,7 @@ Comando para criar uma nova tabela. Recebe como entradas o nome dos arquivos CSV
     * "Falha no processamento do arquivo."
 
 ## **4. REMOÇÃO LÓGICA:** 
+*_por: Hugo Nakamura._*
 
   * **4.1. Entrada:**
     * Arquivo binário dos registros;
