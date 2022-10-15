@@ -15,6 +15,9 @@ char * retornaCampoLinha(char * linha, int numCampo);
 char * retornaCampoRegistroString(int posCursor, int numBytes,FILE * arquivo);
 int retornaCampoRegistroInteiro(int posCursor, FILE * arquivo);
 
+void decrementarCampoInteiro(int offset, FILE * arquivo);
+int empilharRemovido(int rrnRemovido, FILE * arquivo);
+void incrementaCampoInteiro(int offset,FILE * arquivo);
 void mudarCampoString(int posCursor, char * campo, int tamCampo, FILE * arquivo);
 void mudarCampoInteiro(int posCursor, int campo, FILE * arquivo);
 void alocarRegistroCabecalho(char status,
@@ -24,17 +27,6 @@ void alocarRegistroCabecalho(char status,
                              int nPagDisc,
                              int nCompacta,
                              FILE * out);
-
-int alocarRegistroDados(int removido,
-                        int encadeamento,
-                        int idConecta, 
-                        char *siglaPais, 
-                        float idPoPsConectado, 
-                        char * unidade, 
-                        float velocidade, 
-                        char * nomePoPs, 
-                        char * nomePais,
-                        FILE * out);
 
 void insereRegistroDados(int posCursor,
                               char removido,
@@ -47,5 +39,7 @@ void insereRegistroDados(int posCursor,
                               char * nomePoPs, 
                               char * nomePais,
                               FILE * arquivo);
+
+void removeRegistroDados(int rrnRegistro, const char * nomeArquivoBinario);
 
 #endif
