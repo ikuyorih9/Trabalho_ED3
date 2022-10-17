@@ -3,5 +3,6 @@
 
 void imprimeErroRRN();
 void imprimeErroArquivo();
+void registroNaoAlocado();
 
 #endif
