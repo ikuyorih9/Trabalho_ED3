@@ -1,33 +1,9 @@
 #include "createTable.h"
 #include "mensagensErro.h"
 #include "arquivos.h"
+#include "myString.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-char * retornaCampo(char * linha, int numCampo){
-    char * campo = malloc(32*sizeof(char));
-    int contCampo = 0;
-    int j = 0;
-
-    for(int i = 0; linha[i] != '\0' && linha[i] != '\n'; i++){
-        if(linha[i] != ','){
-            campo[j] = linha[i];
-            j++;
-        }
-        else{
-            if(contCampo == numCampo){
-                campo[j] = '\0';
-                break;
-            }
-            else
-                j = 0;
-
-            contCampo++;
-        }    
-    }
-
-    return campo;
-}
 
 void createTable(const char * nomeEntrada, const char * nomeSaida){
     FILE * in = fopen(nomeEntrada, "r");
@@ -54,15 +30,12 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
         //printf("%d: %s", numRegistros,linha);
         char * campoRetornado;
 
-        int idConecta;
-        campoRetornado = retornaCampoLinha(linha, 0);
-        idConecta = atoi(campoRetornado);
+        int idConecta = recebeEntradaInteiro(linha, 0);
         char * siglaPais = retornaCampoLinha(linha, 3);
-        campoRetornado = retornaCampoLinha(linha,4);
-        float idPoPsConectado = atof(campoRetornado);
+        int idPoPsConectado = recebeEntradaInteiro(linha, 4);
         char * unidadeMedida = retornaCampoLinha(linha, 5);
-        campoRetornado = retornaCampoLinha(linha,6);
-        float velocidade = atof(campoRetornado);
+        int velocidade = recebeEntradaInteiro(linha, 6);
+
         char * nomePoPs = retornaCampoLinha(linha, 1);
         char * nomePais = retornaCampoLinha(linha, 2);
 

@@ -11,15 +11,15 @@
 void binarioNaTela(const char *nomeArquivoBinario);
 int retornaNumPaginasDisco(int numRegistros, FILE * arquivo);
 char * retornaCampoLinha(char * linha, int numCampo);
-
-char * retornaCampoRegistroString(int posCursor, int numBytes,FILE * arquivo);
+int retornaNumRegistrosDados(FILE * arquivo);
+char * retornaCampoRegistroString(int posCursor, int numBytes, FILE * arquivo);
 int retornaCampoRegistroInteiro(int posCursor, FILE * arquivo);
-
+void imprimirRegistroDados(int offset, FILE * arquivo);
 void decrementarCampoInteiro(int offset, FILE * arquivo);
 int empilharRemovido(int rrnRemovido, FILE * arquivo);
 void incrementaCampoInteiro(int offset,FILE * arquivo);
-void mudarCampoString(int posCursor, char * campo, int tamCampo, FILE * arquivo);
-void mudarCampoInteiro(int posCursor, int campo, FILE * arquivo);
+void mudarCampoString(int offset, char * campo, int tamCampo, FILE * arquivo);
+void mudarCampoInteiro(int offset, int campo, FILE * arquivo);
 void alocarRegistroCabecalho(char status,
                              int topo,
                              int proxRRN,
@@ -33,9 +33,9 @@ void insereRegistroDados(int posCursor,
                               int encadeamento,
                               int idConecta, 
                               char *siglaPais, 
-                              float idPoPsConectado, 
+                              int idPoPsConectado, 
                               char * unidade, 
-                              float velocidade, 
+                              int velocidade, 
                               char * nomePoPs, 
                               char * nomePais,
                               FILE * arquivo);
