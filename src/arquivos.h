@@ -3,7 +3,7 @@
 
 #define TAM_PAG 960
 #define TAM_REG_DADOS 64
-#define TAM_REG_CAB 20
+#define TAM_REG_CAB 21
 #define TAM_REG_DADOS_FIX 20
 
 #include <stdio.h>

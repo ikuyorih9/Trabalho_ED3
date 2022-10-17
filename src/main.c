@@ -10,6 +10,6 @@ int main(){
     const char nomeEntrada[32] = "../in/topologiaRede.csv";
     const char nomeSaida[32] = "../out/topologiaRede.bin";
 
-    //createTable(nomeEntrada, nomeSaida);
-    insertInto(nomeSaida);
+    createTable(nomeEntrada, nomeSaida);
+    //insertInto(nomeSaida);
 }
