@@ -7,3 +7,7 @@ void imprimeErroRRN(){
 void imprimeErroArquivo(){
     printf("Falha no processamento do arquivo\n");
 }
+
+void registroNaoAlocado(){
+    printf("O registro nao esta alocado!");
+}

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 char * retornaCampo(char * linha, int numCampo){
     char * campo = malloc(32*sizeof(char));
     int contCampo = 0;
@@ -32,8 +33,13 @@ char * retornaCampo(char * linha, int numCampo){
 
 =======
 >>>>>>> hugo
+=======
+char * retornaCampoLinha(char * linha, int numCampo);
+int recebeEntradaInteiro(char * linha, int numCampo);
+
+>>>>>>> hugo
 void createTable(const char * nomeEntrada, const char * nomeSaida){
-    FILE * in = fopen(nomeEntrada, "r");
+    FILE * in = fopen(nomeEntrada, "rb");
     FILE * out = fopen(nomeSaida, "wb");
 
     if(in == NULL || out == NULL){
@@ -55,17 +61,13 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
     //LAÇO QUE RECEBE UMA LINHAS NÃO NULAS.
     while(fgets(linha,128,in) != NULL){  
         //printf("%d: %s", numRegistros,linha);
-        char * campoRetornado;
 
-        int idConecta;
-        campoRetornado = retornaCampoLinha(linha, 0);
-        idConecta = atoi(campoRetornado);
+        int idConecta = recebeEntradaInteiro(linha, 0);
         char * siglaPais = retornaCampoLinha(linha, 3);
-        campoRetornado = retornaCampoLinha(linha,4);
-        float idPoPsConectado = atof(campoRetornado);
+        int idPoPsConectado = recebeEntradaInteiro(linha, 4);
         char * unidadeMedida = retornaCampoLinha(linha, 5);
-        campoRetornado = retornaCampoLinha(linha,6);
-        float velocidade = atof(campoRetornado);
+        int velocidade = recebeEntradaInteiro(linha, 6);
+
         char * nomePoPs = retornaCampoLinha(linha, 1);
         char * nomePais = retornaCampoLinha(linha, 2);
 
@@ -74,7 +76,6 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
         insereRegistroDados(posCursor,'0',-1,idConecta,siglaPais,idPoPsConectado,unidadeMedida,velocidade,nomePoPs,nomePais,out);
         numRegistros++;
 
-        free(campoRetornado);
         free(siglaPais);
         free(unidadeMedida);
         free(nomePoPs);
@@ -90,4 +91,41 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
     fclose(out);
 
     binarioNaTela(nomeSaida);
+}
+
+//RETORNA CAMPO DE OFFSET 'numCampo' DE UMA LINHA CSV.
+char * retornaCampoLinha(char * linha, int numCampo){
+    char * campo = malloc(32*sizeof(char));
+    int contCampo = 0;
+    int j = 0;
+
+    for(int i = 0; linha[i] != '\0' && linha[i] != '\n'; i++){
+        if(linha[i] != ','){
+            campo[j] = linha[i];
+            j++;
+        }
+        else{
+            if(contCampo == numCampo){
+                if(j == 0)
+                    return NULL;
+                else
+                    campo[j] = '\0';
+                break;
+            }
+            else
+                j = 0;
+
+            contCampo++;
+        }    
+    }
+    return campo;
+}
+
+int recebeEntradaInteiro(char * linha, int numCampo){
+    char * campo = retornaCampoLinha(linha, numCampo);
+    if(campo == NULL)
+        return -1;
+    int valorInteiro = atoi(campo);
+    free(campo);
+    return valorInteiro;
 }
