@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "arquivos.h"
 #include "createTable.h"
 #include "insertInto.h"
@@ -11,8 +12,7 @@ int main(){
     const char nomeSaida[32] = "../out/topologiaRede.bin";
 
     createTable(nomeEntrada, nomeSaida);
-    //insertInto(nomeSaida);
-    removeRegistroDados(0, nomeSaida);
     removeRegistroDados(1, nomeSaida);
 
+    insertInto(nomeSaida);
 }
