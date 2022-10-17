@@ -225,7 +225,7 @@ void insereRegistroDados(int posCursor,
     fwrite(&removido, sizeof(char), 1, arquivo);
     fwrite(&encadeamento, sizeof(int), 1, arquivo);
     fwrite(&idConecta, sizeof(int), 1, arquivo);
-
+    
     if(siglaPais != NULL)
         fwrite(siglaPais, sizeof(char), 2, arquivo);
     else
@@ -241,13 +241,19 @@ void insereRegistroDados(int posCursor,
     fwrite(&velocidade, sizeof(int),1,arquivo);
 
     //ESCREVE O CAMPO VARIÁVEL 'nomePoPs' NO ARQUIVO BINARIO.
-    int tamNomePoPs = retornaTamanhoLinha(nomePoPs);
-    fwrite(nomePoPs, sizeof(char),tamNomePoPs, arquivo);
+    int tamNomePoPs = 0;
+    if(nomePoPs != NULL){
+        tamNomePoPs = retornaTamanhoLinha(nomePoPs);
+        fwrite(nomePoPs, sizeof(char),tamNomePoPs, arquivo);
+    }
     fwrite(&delimitador, sizeof(char), 1, arquivo);
 
     //ESCREVE O CAMPO VARIÁVEL 'nomePais' NO ARQUIVO BINARIO.
-    int tamNomePais = retornaTamanhoLinha(nomePais);
-    fwrite(nomePais, sizeof(char),tamNomePais, arquivo);
+    int tamNomePais = 0;
+    if(nomePais != NULL){
+        tamNomePais = retornaTamanhoLinha(nomePais);
+        fwrite(nomePais, sizeof(char),tamNomePais, arquivo);
+    }
     fwrite(&delimitador, sizeof(char), 1, arquivo);
 
     //PREENCHE ESPAÇOS VAZIOS COM LIXO.

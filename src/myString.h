@@ -1,10 +1,9 @@
 #ifndef MY_STRING_H
 #define MY_STRING_H
 
-char * retornaCampoLinha(char * linha, int numCampo);
-int recebeEntradaInteiro(char * linha, int numCampo);
+int comparaStrings(char * str1, char * str2);
 void retiraEnterLinha(char * linha);
 int retornaTamanhoLinha(char * linha);
-char * separaCampoLinha(char * linha, int numCampo);
+
 
 #endif

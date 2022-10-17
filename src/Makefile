@@ -15,8 +15,11 @@ mensagensErro.o: mensagensErro.c
 arquivos.o:arquivos.c
 	gcc -o arquivos.o -c arquivos.c
 
-programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o
-	gcc -o programaTrab main.o createTable.o mensagensErro.o arquivos.o insertInto.o
+myString.o:myString.c
+	gcc -o myString.o -c myString.c
+
+programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o myString.o
+	gcc -o programaTrab main.o createTable.o mensagensErro.o arquivos.o insertInto.o myString.o
 
 run:
 	./programaTrab

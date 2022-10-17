@@ -13,13 +13,9 @@ int main(){
 
     createTable(nomeEntrada, nomeSaida);
     removeRegistroDados(1, nomeSaida);
-    removeRegistroDados(0, nomeSaida);
+   // removeRegistroDados(0, nomeSaida);
     
-    FILE* out = fopen("../out/topologiaRede.bin","rb");
-    int offset = 960 + 2*64;
-    imprimirRegistroDados(offset, out);
-    fclose(out);
     //system("pause");
 
-    //insertInto(nomeSaida);
+    insertInto(nomeSaida);
 }
