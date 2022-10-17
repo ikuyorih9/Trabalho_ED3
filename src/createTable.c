@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 char * retornaCampo(char * linha, int numCampo){
     char * campo = malloc(32*sizeof(char));
     int contCampo = 0;
@@ -31,13 +29,9 @@ char * retornaCampo(char * linha, int numCampo){
     return campo;
 }
 
-=======
->>>>>>> hugo
-=======
 char * retornaCampoLinha(char * linha, int numCampo);
 int recebeEntradaInteiro(char * linha, int numCampo);
 
->>>>>>> hugo
 void createTable(const char * nomeEntrada, const char * nomeSaida){
     FILE * in = fopen(nomeEntrada, "rb");
     FILE * out = fopen(nomeSaida, "wb");

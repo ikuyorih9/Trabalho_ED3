@@ -202,43 +202,7 @@ void alocarRegistroCabecalho(char status,
     fwrite(&nRegRem, sizeof(int),1,out);
     fwrite(&nPagDisc, sizeof(int),1,out);
     fwrite(&nCompacta, sizeof(int),1,out);
-<<<<<<< HEAD
-    insereLixoRegistro(out, TAM_REG_CAB, TAM_PAG);          
-}
-
-int alocarRegistroDados(int removido,
-                        int encadeamento,
-                        int idConecta, 
-                        char *siglaPais, 
-                        float idPoPsConectado, 
-                        char * unidade, 
-                        float velocidade, 
-                        char * nomePoPs, 
-                        char * nomePais,
-                        FILE * out){
-    
-    int a;
-    fwrite(&removido, sizeof(char), 1, out);
-    fwrite(&encadeamento, sizeof(int), 1, out);
-    fwrite(&idConecta, sizeof(int), 1, out);
-    fwrite(siglaPais, sizeof(char), 2, out);
-    fwrite(&idPoPsConectado, sizeof(float), 1, out);
-    fwrite(unidade, sizeof(char), 1, out);
-    fwrite(&velocidade, sizeof(float),1,out);
-
-    int tamNomePoPs = retornaTamanhoCampo(nomePoPs);
-    fwrite(nomePoPs, sizeof(char),tamNomePoPs, out);
-    fwrite(&delimitador, sizeof(char), 1, out);
-
-    int tamNomePais = retornaTamanhoCampo(nomePais);
-    fwrite(nomePais, sizeof(char),tamNomePais, out);
-    fwrite(&delimitador, sizeof(char), 1, out);
-
-    insereLixoRegistro(out, TAM_REG_DADOS_FIX + tamNomePoPs + tamNomePais + 2, TAM_REG_DADOS);
-
-=======
     insereLixoRegistro(TAM_REG_CAB, TAM_PAG, out);          
->>>>>>> hugo
 }
 
 //INSERE UM NOVO REGISTRO DE DADOS.
