@@ -6,37 +6,9 @@
 #include <string.h>
 
 char * separaCamposLinha(char * linha, int numCampo);
+int retornaRRNRegistroDisponivel(RegCab * registroCabecalho, FILE * arquivo);
 int retornaValorInteiro(char * linha, int numCampo);
 char * retornaValorString(char *linha, int numCampo);
-
-//ISSO PODE NAO ESTAR FUNCIONANDO!
-int procuraRegistroRemovido(int topo, FILE * arquivo){
-    if(topo == -1){
-        int rrnRemovido = (ftell(arquivo)-TAM_PAG)/TAM_REG_DADOS;
-        return rrnRemovido;
-    }
-
-    int offset = TAM_PAG + (TAM_REG_DADOS*topo) + 1;
-    int rrnTopo = retornaCampoRegistroInteiro(offset, arquivo);
-    return procuraRegistroRemovido(rrnTopo, arquivo);
-}
-
-int retornaRRNRegistroDisponivel(FILE * arquivo){
-    int topo = retornaCampoRegistroInteiro(1, arquivo);
-    int rrnDisponivel; //rrn onde vou colocar o regitro.
-
-    if(topo != -1){
-        rrnDisponivel = topo;
-        //ATUALIZA TOPO
-        int offsetEncadeamento = TAM_PAG + rrnDisponivel*TAM_REG_DADOS + 1; //PROCURA CAMPO 'encadeamento' NO REGISTRO DE RRN 'topo'
-        int novoTopo = retornaCampoRegistroInteiro(offsetEncadeamento, arquivo); //RETORNA CAMPO DO OFFSET ANTERIOR
-        mudarCampoInteiro(1, novoTopo, arquivo); //MUDA 'topo' DO REGISTRO DE CABEÇALHO PARA 'novoTopo.
-    }
-    else{
-        rrnDisponivel = retornaCampoRegistroInteiro(5, arquivo);
-    }
-    return rrnDisponivel;
-}
 
 void insertInto(const char * nomeArquivo){
     //3 "Campina Grande" "Brazil" "BR" 4 "G" 10
@@ -47,11 +19,16 @@ void insertInto(const char * nomeArquivo){
         return;
     }
 
+    RegCab registroCabecalho = retornaRegistroCabecalho(arquivo);
+
+    registroCabecalho.status = '0';
+    mudarCampoString(0, &(registroCabecalho.status), 1, arquivo);   //PÕE STATUS COMO '0' NA ESCRITA.
+
     int n;
     scanf("%d", &n);
     fflush(stdin);
     for(int i = 0; i < n; i++){
-        int rrnDisponivel = retornaRRNRegistroDisponivel(arquivo);
+        int rrnDisponivel = retornaRRNRegistroDisponivel(&registroCabecalho, arquivo);
         int offset =  TAM_PAG + rrnDisponivel*TAM_REG_DADOS;
         
         char linha[128];
@@ -68,13 +45,26 @@ void insertInto(const char * nomeArquivo){
 
         insereRegistroDados(offset,'0',-1,idConecta,sigla,idPoPsConectado,unidade,velocidade,nomePoPs,nomePais,arquivo);
 
-        int proxRRN = retornaCampoRegistroInteiro(5, arquivo);
+        int proxRRN = registroCabecalho.proxRRN;
+        //SE O rrnDisponivel < proxRRN ENTÃO FOI INSERIDO EM UM REMOVIDO.
         if(rrnDisponivel < proxRRN)
-            decrementarCampoInteiro(9, arquivo);
-        else
-            incrementaCampoInteiro(5, arquivo);
-
+            registroCabecalho.nRegRem--;
+        //SENÃO, FOI INSERIDO ONDE APONTAVA O proxRRN.
+        else{
+            registroCabecalho.proxRRN++;
+            //ATUALIZA nPagDisco SE NECESSÁRIO.
+            int nPagDisco =  retornaNumPaginasDisco(registroCabecalho.proxRRN, arquivo);
+            if(nPagDisco != registroCabecalho.nPagDisco)
+                registroCabecalho.nPagDisco = nPagDisco;
+        }
     }
+
+    registroCabecalho.status = '1';
+    mudarCampoString(0, &(registroCabecalho.status), 1, arquivo); //PÕE STATUS COMO '0' NA ESCRITA.
+    mudarCampoInteiro(1, registroCabecalho.topo, arquivo);      //ATUALIZA topo NO REGISTRO DE CABEÇALHO. 
+    mudarCampoInteiro(5, registroCabecalho.proxRRN, arquivo);   //ATUALIZA proxRRN NO REGISTRO DE CABEÇALHO.
+    mudarCampoInteiro(9, registroCabecalho.nRegRem, arquivo);   //ATUALIZA nRegRem NO REGISTRO DE CABEÇALHO.
+    mudarCampoInteiro(13, registroCabecalho.nPagDisco, arquivo); //ATUALIZA nPagDisco NO REGISTRO DE CABEÇALHO.
 
     fclose(arquivo);
     binarioNaTela(nomeArquivo);
@@ -90,6 +80,23 @@ int retornaValorInteiro(char * linha, int numCampo){
         valorCampo = -1;
     free(campo);
     return valorCampo;
+}
+
+int retornaRRNRegistroDisponivel(RegCab * registroCabecalho, FILE * arquivo){
+    int topo = registroCabecalho->topo;
+    int rrnDisponivel; //rrn onde vou colocar o regitro.
+
+    if(topo != -1){
+        rrnDisponivel = topo;
+        //ATUALIZA TOPO
+        int offsetEncadeamento = TAM_PAG + rrnDisponivel*TAM_REG_DADOS + 1; //PROCURA CAMPO 'encadeamento' NO REGISTRO DE RRN 'topo'
+        int novoTopo = retornaCampoRegistroInteiro(offsetEncadeamento, arquivo); //RETORNA CAMPO DO OFFSET ANTERIOR
+        registroCabecalho->topo = novoTopo; //MUDA 'topo' DO REGISTRO DE CABEÇALHO PARA 'novoTopo.
+    }
+    else
+        rrnDisponivel = registroCabecalho->proxRRN;
+
+    return rrnDisponivel;
 }
 
 char * retornaValorString(char *linha, int numCampo){

@@ -15,8 +15,11 @@ mensagensErro.o: mensagensErro.c
 arquivos.o:arquivos.c
 	gcc -o arquivos.o -c arquivos.c
 
-programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o
-	gcc -o programaTrab main.o createTable.o mensagensErro.o arquivos.o insertInto.o
+remocaoLogica.o: remocaoLogica.c
+	gcc -o remocaoLogica.o -c remocaoLogica.c
+
+programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o remocaoLogica.o
+	gcc -o programaTrab main.o createTable.o mensagensErro.o arquivos.o insertInto.o remocaoLogica.o
 
 run:
 	./programaTrab

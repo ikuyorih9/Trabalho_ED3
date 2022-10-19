@@ -3,6 +3,7 @@
 #include "arquivos.h"
 #include "createTable.h"
 #include "insertInto.h"
+#include "remocaoLogica.h"
 
 int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
@@ -12,7 +13,8 @@ int main(){
     const char nomeSaida[32] = "../out/topologiaRede.bin";
 
     createTable(nomeEntrada, nomeSaida);
-    removeRegistroDados(1, nomeSaida);
 
-    insertInto(nomeSaida);
+    remocaoLogica(nomeSaida);
+
+    //insertInto(nomeSaida);
 }

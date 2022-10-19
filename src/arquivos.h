@@ -8,15 +8,26 @@
 
 #include <stdio.h>
 
+typedef struct{
+    char status;
+    int topo;
+    int proxRRN;
+    int nRegRem;
+    int nPagDisco;
+    int qtdCompacta;
+}RegCab;
+
+
 void binarioNaTela(const char *nomeArquivoBinario);
 int retornaNumPaginasDisco(int numRegistros, FILE * arquivo);
 char * retornaCampoLinha(char * linha, int numCampo);
 int retornaNumRegistrosDados(FILE * arquivo);
 char * retornaCampoRegistroString(int posCursor, int numBytes, FILE * arquivo);
 int retornaCampoRegistroInteiro(int posCursor, FILE * arquivo);
+RegCab retornaRegistroCabecalho(FILE * arquivo);
 void imprimirRegistroDados(int offset, FILE * arquivo);
 void decrementarCampoInteiro(int offset, FILE * arquivo);
-int empilharRemovido(int rrnRemovido, FILE * arquivo);
+int empilharRemovido(int rrnRemovido, RegCab * registroCabecalho);
 void incrementaCampoInteiro(int offset,FILE * arquivo);
 void mudarCampoString(int offset, char * campo, int tamCampo, FILE * arquivo);
 void mudarCampoInteiro(int offset, int campo, FILE * arquivo);
@@ -40,6 +51,6 @@ void insereRegistroDados(int posCursor,
                               char * nomePais,
                               FILE * arquivo);
 
-void removeRegistroDados(int rrnRegistro, const char * nomeArquivoBinario);
+void removeRegistroDados(int rrnRegistro, RegCab * registroCabecalho, FILE * arquivo);
 
 #endif
