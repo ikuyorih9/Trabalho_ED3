@@ -41,16 +41,22 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
         return;
     }
 
-    //CRIA REGISTRO DE CABEÇALHO.
-    alocarRegistroCabecalho(0, -1, 0, 0, 0, 0, out);
+    //CRIA REGISTRO DE CABEÇALHO EM RAM.
+    RegCab registroCabecalho;
+    registroCabecalho.status = '0';
+    registroCabecalho.topo = -1;
+    registroCabecalho.proxRRN = 0;
+    registroCabecalho.nRegRem = 0;
+    registroCabecalho.nPagDisco = 0;
+    registroCabecalho.qtdCompacta = 0;
+
+    alocarRegistroCabecalho('0', -1, 0, 0, 0, 0, out);
 
     fseek(out, 960,SEEK_SET);
 
     //CRIA REGISTRO DE DADOS.
     char linha[128];
     fgets(linha,128,in);    //RECEBE LINHA DE NOME DAS COLUNAS.
-
-    int numRegistros = 0;
 
     //LAÇO QUE RECEBE UMA LINHAS NÃO NULAS.
     while(fgets(linha,128,in) != NULL){  
@@ -65,21 +71,22 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
         char * nomePoPs = retornaCampoLinha(linha, 1);
         char * nomePais = retornaCampoLinha(linha, 2);
 
-        int posCursor = (numRegistros * TAM_REG_DADOS) + TAM_PAG;
+        int posCursor = (registroCabecalho.proxRRN * TAM_REG_DADOS) + TAM_PAG;
 
         insereRegistroDados(posCursor,'0',-1,idConecta,siglaPais,idPoPsConectado,unidadeMedida,velocidade,nomePoPs,nomePais,out);
-        numRegistros++;
+        registroCabecalho.proxRRN++;
 
         free(siglaPais);
         free(unidadeMedida);
         free(nomePoPs);
         free(nomePais);
     }
-    char status = '1';
-    int numPag = retornaNumPaginasDisco(numRegistros, out);
-    mudarCampoString(0, &status, 1, out);
-    mudarCampoInteiro(5, numRegistros, out);    //numRegistros = RRN proximo registro.
-    mudarCampoInteiro(13, numPag, out);
+    registroCabecalho.status = '1';
+    registroCabecalho.nPagDisco = retornaNumPaginasDisco(registroCabecalho.proxRRN, out);
+    
+    mudarCampoString(0, &(registroCabecalho.status), 1, out);     //ATUALIZA CONSISTENCIA status NO ARQUIVO BINARIO.
+    mudarCampoInteiro(5, registroCabecalho.proxRRN, out);      //ATUALIZA proxRRN NO ARQUIVO BINARIO.
+    mudarCampoInteiro(13, registroCabecalho.nPagDisco, out);    //ATUALIZA nPagDisco NO ARQUIVO BINARIO.
 
     fclose(in);
     fclose(out);

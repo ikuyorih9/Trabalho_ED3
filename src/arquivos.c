@@ -88,6 +88,20 @@ int retornaCampoRegistroInteiro(int posCursor, FILE * arquivo){
     return campo;
 }
 
+//RETORNA O REGISTRO DE CABEÇALHO NUMA STRUCT RegCab.
+RegCab retornaRegistroCabecalho(FILE * arquivo){
+    RegCab registroCabecalho;
+    fseek(arquivo, 0, SEEK_SET);
+    fread(&(registroCabecalho.status), sizeof(char), 1, arquivo);
+    fread(&(registroCabecalho.topo), sizeof(int), 1, arquivo);
+    fread(&(registroCabecalho.proxRRN), sizeof(int), 1, arquivo);
+    fread(&(registroCabecalho.nRegRem), sizeof(int), 1, arquivo);
+    fread(&(registroCabecalho.nPagDisco), sizeof(int), 1, arquivo);
+    fread(&(registroCabecalho.qtdCompacta), sizeof(int), 1, arquivo);
+
+    return registroCabecalho;
+}
+
 void imprimirRegistroDados(int offset, FILE * arquivo){
     char * removido = retornaCampoRegistroString(offset, 1, arquivo);
     int encadeamento = retornaCampoRegistroInteiro(offset+1, arquivo);
@@ -132,15 +146,12 @@ void decrementarCampoInteiro(int offset, FILE * arquivo){
 }
 
 //  RETORNA ENCADEAMENTO DO REGISTRO A REMOVER E EMPILHA TOPO.
-int empilharRemovido(int rrnRemovido, FILE * arquivo){
-    int topoAntigo;
+int empilharRemovido(int rrnRemovido, RegCab * registroCabecalho){
     //RESGATA O TOPO NO REGISTRO DE CABEÇALHO.
-    fseek(arquivo, 1, SEEK_SET);
-    fread(&topoAntigo, sizeof(int), 1, arquivo);
-    
+    int topoAntigo = registroCabecalho->topo;
+
     //ATUALIZA O TOPO COM O RRN 'rrnRemovido' DO NOVO REMOVIDO.
-    fseek(arquivo, 1, SEEK_SET);
-    fwrite(&rrnRemovido, sizeof(int), 1, arquivo);
+    registroCabecalho->topo = rrnRemovido;
 
     return topoAntigo;
 }
@@ -180,7 +191,6 @@ void mudarCampoInteiro(int offset, int campo, FILE * arquivo){
     fseek(arquivo, offset, SEEK_SET);
     fwrite(&campo, sizeof(int), 1, arquivo);
 }
-
 
 /**************************************
     INSERÇÃO E REMOÇÃO DE REGISTROS.
@@ -261,16 +271,10 @@ void insereRegistroDados(int posCursor,
 }
 
 //REMOVE LOGICAMENTE UM REGISTRO DE DADOS DE RRN 'rrnRegistro'.
-void removeRegistroDados(int rrnRegistro, const char * nomeArquivoBinario){
-    //ABRE E VERIFICA ARQUIVO.
-    FILE * arquivo = fopen(nomeArquivoBinario, "rb+");
-    if(arquivo == NULL){
-        imprimeErroArquivo();
-        return;
-    }
+void removeRegistroDados(int rrnRegistro, RegCab * registroCabecalho, FILE * arquivo){
 
     int offset = TAM_PAG + rrnRegistro*TAM_REG_DADOS; //calcula offset do registro.
-    char * removido = retornaCampoRegistroString(offset, 1, arquivo); //obtem o campo 'removido'.
+    char * removido = retornaCampoRegistroString(offset, 1, arquivo); //obtem o campo 'removido' do registro de dados.
     
     //VERIFICA SE REGISTRO JÁ ESTÁ REMOVIDO.
     if(removido[0] == '1'){
@@ -282,7 +286,7 @@ void removeRegistroDados(int rrnRegistro, const char * nomeArquivoBinario){
         free(removido);
 
     //EMPILHA O TOPO E OBTEM O VALOR DO ENCADEAMENTO A SE COLOCAR NO REGISTRO REMOVIDO.
-    int encadeamento = empilharRemovido(rrnRegistro, arquivo);
+    int encadeamento = empilharRemovido(rrnRegistro, registroCabecalho);
     fseek(arquivo, offset, SEEK_SET);
     fwrite(&simboloRemovido, sizeof(char), 1, arquivo); //escreve a remoção como '1'.
     fwrite(&encadeamento, sizeof(int), 1, arquivo); //escreve o encadeamento com 'encadeamento'.
@@ -291,17 +295,6 @@ void removeRegistroDados(int rrnRegistro, const char * nomeArquivoBinario){
     insereLixoRegistro(5, TAM_REG_DADOS, arquivo);
 
     //INCREMENTA O NÚMERO DE REGISTROS REMOVIDOS NO CABEÇALHO.
-    incrementaCampoInteiro(9, arquivo);
+    registroCabecalho->nRegRem++;
 
-    //VERIFICA numPagsDisco NO REGISTRO DE CABEÇALHO.
-    int numRegistros = retornaNumRegistrosDados(arquivo);
-    int numPags = retornaNumPaginasDisco(numRegistros, arquivo);    //VALOR RECALCULADO.
-    int numPagsReg = retornaCampoRegistroInteiro(13, arquivo);      //VALOR SALVO NO REGISTRO.
-
-    if(numPags != numPagsReg)
-        mudarCampoInteiro(13, numPags, arquivo);
-
-    //FECHA ARQUIVO.
-    fclose(arquivo);
-    
 }
