@@ -13,7 +13,9 @@ char * retornaValorString(char *linha, int numCampo);
 void insertInto(const char * nomeArquivo){
     //3 "Campina Grande" "Brazil" "BR" 4 "G" 10
     //22 "Teresina" NULO "BR" NULO NULO NULO
-    FILE * arquivo = fopen(nomeArquivo, "rb+");
+
+    char * diretorioArquivo = retornaDiretorio(DIR_ENTRADA, nomeArquivo);
+    FILE * arquivo = fopen(diretorioArquivo, "rb+");
     if(arquivo == NULL){
         imprimeErroArquivo();
         return;
@@ -34,16 +36,20 @@ void insertInto(const char * nomeArquivo){
         char linha[128];
         fgets(linha, 128, stdin);
 
-        int idConecta = retornaValorInteiro(linha, 0);
-        char * sigla = retornaValorString(linha, 3);
-        int idPoPsConectado = retornaValorInteiro(linha, 4);
-        char * unidade = retornaValorString(linha,5);
-        int velocidade = retornaValorInteiro(linha, 6);
-        char * nomePoPs = retornaValorString(linha, 1);
-        char * nomePais = retornaValorString(linha, 2);
+        RegDados registroDados;
+
+        registroDados.removido = '0';
+        registroDados.encadeamento = -1;
+        registroDados.idConecta = retornaValorInteiro(linha, 0);
+        registroDados.siglaPais = retornaValorString(linha, 3);
+        registroDados.idPoPsConectado = retornaValorInteiro(linha, 4);
+        registroDados.unidadeMedida = retornaValorString(linha,5);
+        registroDados.velocidade = retornaValorInteiro(linha, 6);
+        registroDados.nomePoPs = retornaValorString(linha, 1);
+        registroDados.nomePais = retornaValorString(linha, 2);
         
 
-        insereRegistroDados(offset,'0',-1,idConecta,sigla,idPoPsConectado,unidade,velocidade,nomePoPs,nomePais,arquivo);
+        insereRegistroDados(offset, registroDados,arquivo);
 
         int proxRRN = registroCabecalho.proxRRN;
         //SE O rrnDisponivel < proxRRN ENTÃO FOI INSERIDO EM UM REMOVIDO.
@@ -53,7 +59,7 @@ void insertInto(const char * nomeArquivo){
         else{
             registroCabecalho.proxRRN++;
             //ATUALIZA nPagDisco SE NECESSÁRIO.
-            int nPagDisco =  retornaNumPaginasDisco(registroCabecalho.proxRRN, arquivo);
+            int nPagDisco =  retornaNumPaginasDisco(registroCabecalho.proxRRN);
             nPagDisco++;
             if(nPagDisco != registroCabecalho.nPagDisco)
                 registroCabecalho.nPagDisco = nPagDisco;
@@ -68,7 +74,8 @@ void insertInto(const char * nomeArquivo){
     mudarCampoInteiro(13, registroCabecalho.nPagDisco, arquivo); //ATUALIZA nPagDisco NO REGISTRO DE CABEÇALHO.
 
     fclose(arquivo);
-    binarioNaTela(nomeArquivo);
+    binarioNaTela(diretorioArquivo);
+    free(diretorioArquivo);
 }
 
 int retornaValorInteiro(char * linha, int numCampo){
@@ -91,7 +98,7 @@ int retornaRRNRegistroDisponivel(RegCab * registroCabecalho, FILE * arquivo){
         rrnDisponivel = topo;
         //ATUALIZA TOPO
         int offsetEncadeamento = TAM_PAG + rrnDisponivel*TAM_REG_DADOS + 1; //PROCURA CAMPO 'encadeamento' NO REGISTRO DE RRN 'topo'
-        int novoTopo = retornaCampoRegistroInteiro(offsetEncadeamento, arquivo); //RETORNA CAMPO DO OFFSET ANTERIOR
+        int novoTopo = retornaCampoFixoInteiro(offsetEncadeamento, arquivo); //RETORNA CAMPO DO OFFSET ANTERIOR
         registroCabecalho->topo = novoTopo; //MUDA 'topo' DO REGISTRO DE CABEÇALHO PARA 'novoTopo.
     }
     else

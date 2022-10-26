@@ -3,6 +3,7 @@
 #include "arquivos.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 char * retornaCampo(char * linha, int numCampo){
     char * campo = malloc(32*sizeof(char));
@@ -33,8 +34,11 @@ char * retornaCampoLinha(char * linha, int numCampo);
 int recebeEntradaInteiro(char * linha, int numCampo);
 
 void createTable(const char * nomeEntrada, const char * nomeSaida){
-    FILE * in = fopen(nomeEntrada, "rb");
-    FILE * out = fopen(nomeSaida, "wb");
+    char * diretorioEntrada = retornaDiretorio(DIR_ENTRADA, nomeEntrada);
+    char * diretorioSaida = retornaDiretorio(DIR_SAIDA, nomeSaida);
+
+    FILE * in = fopen(diretorioEntrada, "rb");
+    FILE * out = fopen(diretorioSaida, "wb");
 
     if(in == NULL || out == NULL){
         imprimeErroArquivo();
@@ -50,7 +54,7 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
     registroCabecalho.nPagDisco = 0;
     registroCabecalho.qtdCompacta = 0;
 
-    alocarRegistroCabecalho('0', -1, 0, 0, 0, 0, out);
+    alocarRegistroCabecalho(registroCabecalho, out);
 
     fseek(out, 960,SEEK_SET);
 
@@ -59,30 +63,33 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
     fgets(linha,128,in);    //RECEBE LINHA DE NOME DAS COLUNAS.
     int i = 1;
     //LAÇO QUE RECEBE UMA LINHAS NÃO NULAS.
-    while(fgets(linha,128,in) != NULL){  
-        int idConecta = recebeEntradaInteiro(linha, 0);
-        char * siglaPais = retornaCampoLinha(linha, 3);
-        int idPoPsConectado = recebeEntradaInteiro(linha, 4);
-        char * unidadeMedida = retornaCampoLinha(linha, 5);
-        int velocidade = recebeEntradaInteiro(linha, 6);
+    while(fgets(linha,128,in) != NULL){
+        RegDados registroDados;
+        registroDados.removido = '0';
+        registroDados.encadeamento = -1;  
+        registroDados.idConecta = recebeEntradaInteiro(linha, 0);
+        registroDados.siglaPais = retornaCampoLinha(linha, 3);
+        registroDados.idPoPsConectado = recebeEntradaInteiro(linha, 4);
+        registroDados.unidadeMedida = retornaCampoLinha(linha, 5);
+        registroDados.velocidade = recebeEntradaInteiro(linha, 6);
         
 
-        char * nomePoPs = retornaCampoLinha(linha, 1);
-        char * nomePais = retornaCampoLinha(linha, 2);
+        registroDados.nomePoPs = retornaCampoLinha(linha, 1);
+        registroDados.nomePais = retornaCampoLinha(linha, 2);
 
-        int posCursor = (registroCabecalho.proxRRN * TAM_REG_DADOS) + TAM_PAG;
+        int offset = TAM_PAG + registroCabecalho.proxRRN * TAM_REG_DADOS;
 
-        insereRegistroDados(posCursor,'0',-1,idConecta,siglaPais,idPoPsConectado,unidadeMedida,velocidade,nomePoPs,nomePais,out);
+        insereRegistroDados(offset, registroDados, out);
         registroCabecalho.proxRRN++;
 
-        free(siglaPais);
-        free(unidadeMedida);
-        free(nomePoPs);
-        free(nomePais);
+        free(registroDados.siglaPais);
+        free(registroDados.unidadeMedida);
+        free(registroDados.nomePoPs);
+        free(registroDados.nomePais);
         i++;
     }
     registroCabecalho.status = '1';
-    registroCabecalho.nPagDisco = retornaNumPaginasDisco(registroCabecalho.proxRRN, out);
+    registroCabecalho.nPagDisco = retornaNumPaginasDisco(registroCabecalho.proxRRN);
     registroCabecalho.nPagDisco++;
     mudarCampoString(0, &(registroCabecalho.status), 1, out);     //ATUALIZA CONSISTENCIA status NO ARQUIVO BINARIO.
     mudarCampoInteiro(5, registroCabecalho.proxRRN, out);      //ATUALIZA proxRRN NO ARQUIVO BINARIO.
@@ -91,7 +98,10 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
     fclose(in);
     fclose(out);
 
-    binarioNaTela(nomeSaida);
+    binarioNaTela(diretorioSaida);
+
+    free(diretorioEntrada);
+    free(diretorioSaida);
 }
 
 //RETORNA CAMPO DE OFFSET 'numCampo' DE UMA LINHA CSV.

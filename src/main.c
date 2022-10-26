@@ -5,26 +5,22 @@
 #include "createTable.h"
 #include "insertInto.h"
 #include "remocaoLogica.h"
+#include "compactacao.h"
 
 int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
     //FILE* out = fopen("../out/topologiaRede.bin","wb");
 
-    char nomeEntrada[32] = "in/";
-    char nomeSaida[32] = "out/";
-
     int comando;
-    char entrada[30];
-    char saida[30];
+    char nomeEntrada[32];
+    char nomeSaida[32];
     scanf("%d", &comando);
 
     switch(comando){
         case 1:
-            scanf("%s", entrada);
-            scanf("%s", saida);
+            scanf("%s", nomeEntrada);
+            scanf("%s", nomeSaida);
             fflush(stdin);
-            strcat(nomeEntrada, entrada);
-            strcat(nomeSaida, saida);
             createTable(nomeEntrada, nomeSaida);
             break;
         case 2:
@@ -34,11 +30,12 @@ int main(){
         case 4:
             break;
         case 5:
-            scanf("%s", entrada);
-            strcat(nomeEntrada, entrada);
+            scanf("%s", nomeEntrada);
             insertInto(nomeEntrada);
             break;
         case 6:
+            scanf("%s", nomeEntrada);
+            compactacao(nomeEntrada);
             break;
     }
 
