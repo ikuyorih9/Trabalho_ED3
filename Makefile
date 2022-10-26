@@ -18,8 +18,11 @@ src/arquivos.o: src/arquivos.c
 src/remocaoLogica.o: src/remocaoLogica.c
 	gcc -o src/remocaoLogica.o -c src/remocaoLogica.c
 
-programaTrab: src/main.o src/createTable.o src/mensagensErro.o src/arquivos.o src/insertInto.o src/remocaoLogica.o
-	gcc -o programaTrab src/main.o src/createTable.o src/mensagensErro.o src/arquivos.o src/insertInto.o src/remocaoLogica.o
+src/compactacao.o: src/compactacao.c
+	gcc -o src/compactacao.o -c src/compactacao.c
+
+programaTrab: src/main.o src/createTable.o src/mensagensErro.o src/arquivos.o src/insertInto.o src/remocaoLogica.o src/compactacao.o
+	gcc -o programaTrab src/main.o src/createTable.o src/mensagensErro.o src/arquivos.o src/insertInto.o src/remocaoLogica.o src/compactacao.o
 
 run:
 	./programaTrab
