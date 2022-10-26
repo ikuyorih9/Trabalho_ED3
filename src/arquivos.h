@@ -17,7 +17,7 @@ typedef struct{
     int qtdCompacta;
 }RegCab;
 
-
+void VerificaPaginaDisco(RegCab * registroCabecalho ,FILE * arquivo);
 void binarioNaTela(const char *nomeArquivoBinario);
 int retornaNumPaginasDisco(int numRegistros, FILE * arquivo);
 char * retornaCampoLinha(char * linha, int numCampo);
@@ -29,6 +29,7 @@ void imprimirRegistroDados(int offset, FILE * arquivo);
 void decrementarCampoInteiro(int offset, FILE * arquivo);
 int empilharRemovido(int rrnRemovido, RegCab * registroCabecalho);
 void incrementaCampoInteiro(int offset,FILE * arquivo);
+void insereLixo(int nBytesLidos, int tamRegistro, FILE * out);
 void mudarCampoString(int offset, char * campo, int tamCampo, FILE * arquivo);
 void mudarCampoInteiro(int offset, int campo, FILE * arquivo);
 void alocarRegistroCabecalho(char status,

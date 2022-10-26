@@ -16,7 +16,6 @@ char * retornaCampo(char * linha, int numCampo){
         }
         else{
             if(contCampo == numCampo){
-                campo[j] = '\0';
                 break;
             }
             else
@@ -26,6 +25,7 @@ char * retornaCampo(char * linha, int numCampo){
         }    
     }
 
+    campo[j] = '\0';
     return campo;
 }
 
@@ -57,16 +57,15 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
     //CRIA REGISTRO DE DADOS.
     char linha[128];
     fgets(linha,128,in);    //RECEBE LINHA DE NOME DAS COLUNAS.
-
+    int i = 1;
     //LAÇO QUE RECEBE UMA LINHAS NÃO NULAS.
     while(fgets(linha,128,in) != NULL){  
-        //printf("%d: %s", numRegistros,linha);
-
         int idConecta = recebeEntradaInteiro(linha, 0);
         char * siglaPais = retornaCampoLinha(linha, 3);
         int idPoPsConectado = recebeEntradaInteiro(linha, 4);
         char * unidadeMedida = retornaCampoLinha(linha, 5);
         int velocidade = recebeEntradaInteiro(linha, 6);
+        
 
         char * nomePoPs = retornaCampoLinha(linha, 1);
         char * nomePais = retornaCampoLinha(linha, 2);
@@ -80,10 +79,11 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
         free(unidadeMedida);
         free(nomePoPs);
         free(nomePais);
+        i++;
     }
     registroCabecalho.status = '1';
     registroCabecalho.nPagDisco = retornaNumPaginasDisco(registroCabecalho.proxRRN, out);
-    
+    registroCabecalho.nPagDisco++;
     mudarCampoString(0, &(registroCabecalho.status), 1, out);     //ATUALIZA CONSISTENCIA status NO ARQUIVO BINARIO.
     mudarCampoInteiro(5, registroCabecalho.proxRRN, out);      //ATUALIZA proxRRN NO ARQUIVO BINARIO.
     mudarCampoInteiro(13, registroCabecalho.nPagDisco, out);    //ATUALIZA nPagDisco NO ARQUIVO BINARIO.
@@ -100,8 +100,8 @@ char * retornaCampoLinha(char * linha, int numCampo){
     int contCampo = 0;
     int j = 0;
 
-    for(int i = 0; linha[i] != '\0' && linha[i] != '\n'; i++){
-        if(linha[i] != ','){
+    for(int i = 0; linha[i] != '\0'; i++){
+        if(linha[i] != ',' && linha[i] != '\n'){
             campo[j] = linha[i];
             j++;
         }
@@ -109,8 +109,6 @@ char * retornaCampoLinha(char * linha, int numCampo){
             if(contCampo == numCampo){
                 if(j == 0)
                     return NULL;
-                else
-                    campo[j] = '\0';
                 break;
             }
             else
@@ -119,6 +117,7 @@ char * retornaCampoLinha(char * linha, int numCampo){
             contCampo++;
         }    
     }
+    campo[j] = '\0';
     return campo;
 }
 

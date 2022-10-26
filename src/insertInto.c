@@ -54,6 +54,7 @@ void insertInto(const char * nomeArquivo){
             registroCabecalho.proxRRN++;
             //ATUALIZA nPagDisco SE NECESSÁRIO.
             int nPagDisco =  retornaNumPaginasDisco(registroCabecalho.proxRRN, arquivo);
+            nPagDisco++;
             if(nPagDisco != registroCabecalho.nPagDisco)
                 registroCabecalho.nPagDisco = nPagDisco;
         }
@@ -132,7 +133,6 @@ char * separaCamposLinha(char * linha, int numCampo){
             j++;
         }
     }
-    
     campo[j] = '\0';
     return campo;
 }

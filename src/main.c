@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "arquivos.h"
 #include "createTable.h"
 #include "insertInto.h"
@@ -9,12 +10,37 @@ int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
     //FILE* out = fopen("../out/topologiaRede.bin","wb");
 
-    const char nomeEntrada[32] = "../in/topologiaRede.csv";
-    const char nomeSaida[32] = "../out/topologiaRede.bin";
+    char nomeEntrada[32] = "in/";
+    char nomeSaida[32] = "out/";
 
-    createTable(nomeEntrada, nomeSaida);
+    int comando;
+    char entrada[30];
+    char saida[30];
+    scanf("%d", &comando);
 
-    remocaoLogica(nomeSaida);
+    switch(comando){
+        case 1:
+            scanf("%s", entrada);
+            scanf("%s", saida);
+            fflush(stdin);
+            strcat(nomeEntrada, entrada);
+            strcat(nomeSaida, saida);
+            createTable(nomeEntrada, nomeSaida);
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 5:
+            scanf("%s", entrada);
+            strcat(nomeEntrada, entrada);
+            insertInto(nomeEntrada);
+            break;
+        case 6:
+            break;
+    }
 
-    //insertInto(nomeSaida);
+    return 0;
 }

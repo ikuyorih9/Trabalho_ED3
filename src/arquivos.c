@@ -129,6 +129,19 @@ void imprimirRegistroDados(int offset, FILE * arquivo){
     MODIFICAÇÃO DE REGISTROS.
 *******************************/
 
+void VerificaPaginaDisco(RegCab * registroCabecalho ,FILE * arquivo){
+    int offset = registroCabecalho->proxRRN*TAM_REG_DADOS + TAM_PAG;
+    if((registroCabecalho->proxRRN*TAM_REG_DADOS) % TAM_PAG == 0)
+        registroCabecalho->nPagDisco = registroCabecalho->proxRRN*TAM_REG_DADOS/TAM_PAG;
+    else{
+        registroCabecalho->nPagDisco = (registroCabecalho->proxRRN*TAM_REG_DADOS/TAM_PAG)+1;
+        fseek(arquivo, offset, SEEK_SET);
+        insereLixo(0, 960, arquivo);
+    }
+
+    
+}
+
 //DECREMENTA CAMPO INTEIRO DO OFFSET 'offset'.
 void decrementarCampoInteiro(int offset, FILE * arquivo){
     int quantidade;
@@ -173,7 +186,7 @@ void incrementaCampoInteiro(int offset,FILE * arquivo){
 }
 
 //  PREENCHE LIXO NO REGISTRO DE 'nBytesLidos' até 'tamRegistro'.
-void insereLixoRegistro(int nBytesLidos, int tamRegistro, FILE * out){
+void insereLixo(int nBytesLidos, int tamRegistro, FILE * out){
     char lixo = '$';
     for(int a = nBytesLidos; a < tamRegistro; a++)
         fwrite(&lixo, sizeof(char), 1, out);
@@ -212,7 +225,7 @@ void alocarRegistroCabecalho(char status,
     fwrite(&nRegRem, sizeof(int),1,out);
     fwrite(&nPagDisc, sizeof(int),1,out);
     fwrite(&nCompacta, sizeof(int),1,out);
-    insereLixoRegistro(TAM_REG_CAB, TAM_PAG, out);          
+    insereLixo(TAM_REG_CAB, TAM_PAG, out);          
 }
 
 //INSERE UM NOVO REGISTRO DE DADOS.
@@ -239,14 +252,14 @@ void insereRegistroDados(int posCursor,
     if(siglaPais != NULL)
         fwrite(siglaPais, sizeof(char), 2, arquivo);
     else
-        insereLixoRegistro(0, 2, arquivo);
+        insereLixo(0, 2, arquivo);
 
     fwrite(&idPoPsConectado, sizeof(int), 1, arquivo);
 
     if(unidade != NULL)
         fwrite(unidade, sizeof(char), 1, arquivo);
     else
-        insereLixoRegistro(0, 1, arquivo);
+        insereLixo(0, 1, arquivo);
     
     fwrite(&velocidade, sizeof(int),1,arquivo);
 
@@ -267,7 +280,7 @@ void insereRegistroDados(int posCursor,
     fwrite(&delimitador, sizeof(char), 1, arquivo);
 
     //PREENCHE ESPAÇOS VAZIOS COM LIXO.
-    insereLixoRegistro(TAM_REG_DADOS_FIX + tamNomePoPs + tamNomePais + 2, TAM_REG_DADOS, arquivo);
+    insereLixo(TAM_REG_DADOS_FIX + tamNomePoPs + tamNomePais + 2, TAM_REG_DADOS, arquivo);
 }
 
 //REMOVE LOGICAMENTE UM REGISTRO DE DADOS DE RRN 'rrnRegistro'.
@@ -292,7 +305,7 @@ void removeRegistroDados(int rrnRegistro, RegCab * registroCabecalho, FILE * arq
     fwrite(&encadeamento, sizeof(int), 1, arquivo); //escreve o encadeamento com 'encadeamento'.
 
     //SOBREPÕE O RESTO DO REGISTRO COM LIXO.
-    insereLixoRegistro(5, TAM_REG_DADOS, arquivo);
+    insereLixo(5, TAM_REG_DADOS, arquivo);
 
     //INCREMENTA O NÚMERO DE REGISTROS REMOVIDOS NO CABEÇALHO.
     registroCabecalho->nRegRem++;
