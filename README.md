@@ -2,7 +2,7 @@
 
 Desenvolvido por:
 * Hugo Hiroyuki Nakamura
-* Matheus Santos Messias
+* Mateus Santos Messias
 ---
 
 # Funcionalidades
