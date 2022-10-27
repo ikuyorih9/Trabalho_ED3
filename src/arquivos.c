@@ -49,11 +49,9 @@ void imprimeRegistro(int offset, FILE * arquivo){
     RegDados registroDados;
     char * removido = retornaCampoFixoString(offset, 1, arquivo);
     registroDados.removido = *removido;
-    if (registroDados.removido == '1') {
-        registroNaoAlocado();
-        printf("\n");
+    if (registroDados.removido == '1') 
         return;
-    }
+        
     registroDados.idConecta = retornaCampoFixoInteiro(offset + 5, arquivo);
     registroDados.siglaPais = retornaCampoFixoString(offset + 9, 2, arquivo);
     registroDados.idPoPsConectado = retornaCampoFixoInteiro(offset + 11, arquivo);
@@ -83,6 +81,7 @@ void imprimeRegistro(int offset, FILE * arquivo){
     }
     printf("\n");
 
+    free(removido);
     free(registroDados.siglaPais);
     free(registroDados.unidadeMedida);
     free(registroDados.nomePoPs);

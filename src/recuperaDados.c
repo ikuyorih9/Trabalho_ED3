@@ -8,7 +8,7 @@
 
 void recuperaDados(const char * nomeArquivo){
     char * diretorioArquivo = retornaDiretorio(DIR_ENTRADA, nomeArquivo);
-    FILE * arquivo = fopen(diretorioArquivo, "rb+");
+    FILE * arquivo = fopen(diretorioArquivo, "rb");
     if(arquivo == NULL){
         imprimeErroArquivo();
         return;
@@ -31,6 +31,6 @@ void recuperaDados(const char * nomeArquivo){
         registroNaoAlocado();
         printf("\n");
     }
-    printf("Numero de paginas de disco: %d\n", registroCabecalho.nPagDisco);
+    printf("Numero de paginas de disco: %d\n\n", registroCabecalho.nPagDisco);
     
 }
