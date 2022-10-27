@@ -12,8 +12,8 @@ int main(){
     //FILE* out = fopen("../out/topologiaRede.bin","wb");
 
     int comando;
-    char nomeEntrada[32];
-    char nomeSaida[32];
+    char nomeEntrada[64];
+    char nomeSaida[64];
     scanf("%d", &comando);
 
     switch(comando){
