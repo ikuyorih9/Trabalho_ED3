@@ -10,6 +10,13 @@ int retornaRRNRegistroDisponivel(RegCab * registroCabecalho, FILE * arquivo);
 int retornaValorInteiro(char * linha, int numCampo);
 char * retornaValorString(char *linha, int numCampo);
 
+void flush (){
+    int ch;
+    while ((ch = fgetc(stdin)) != EOF && (ch != '\n'))
+    {
+    }   
+}
+
 void insertInto(const char * nomeArquivo){
     //3 "Campina Grande" "Brazil" "BR" 4 "G" 10
     //22 "Teresina" NULO "BR" NULO NULO NULO
@@ -28,7 +35,7 @@ void insertInto(const char * nomeArquivo){
 
     int n;
     scanf("%d", &n);
-    fflush(stdin);
+    flush();
     for(int i = 0; i < n; i++){
         int rrnDisponivel = retornaRRNRegistroDisponivel(&registroCabecalho, arquivo);
         int offset =  TAM_PAG + rrnDisponivel*TAM_REG_DADOS;
