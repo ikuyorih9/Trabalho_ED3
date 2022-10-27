@@ -17,19 +17,24 @@ void compactacao(const char nomeArquivo[64]){
         imprimeErroArquivo();
         return;
     }
-
-    int qtdRegistros = retornaCampoFixoInteiro(5, arquivo);
-    int qtdCompacta = retornaCampoFixoInteiro(17, arquivo);
     
+    RegCab registroCabecalho = retornaRegistroCabecalho(arquivo);
+    if(registroCabecalho.status == '0'){
+        imprimeErroArquivo();
+        return;
+    }
+
     RegCab registroCabCompactado;
     registroCabCompactado.status = '0';
     registroCabCompactado.topo = -1;
     registroCabCompactado.proxRRN = 0;
     registroCabCompactado.nRegRem = 0;
     registroCabCompactado.nPagDisco = 0;
-    registroCabCompactado.qtdCompacta = qtdCompacta + 1;
+    registroCabCompactado.qtdCompacta = registroCabecalho.qtdCompacta + 1;
 
     alocarRegistroCabecalho(registroCabCompactado, arquivoCompactado);
+
+    int qtdRegistros = registroCabecalho.proxRRN;
 
     for(int i = 0; i < qtdRegistros; i++){
         int offset = TAM_PAG + i*TAM_REG_DADOS;

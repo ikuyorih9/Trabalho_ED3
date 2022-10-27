@@ -25,6 +25,10 @@ void insertInto(const char * nomeArquivo){
     }
 
     RegCab registroCabecalho = retornaRegistroCabecalho(arquivo);
+    if(registroCabecalho.status == '0'){
+        imprimeErroArquivo();
+        return;
+    }
 
     registroCabecalho.status = '0';
     mudarCampoString(0, &(registroCabecalho.status), 1, arquivo);   //PÕE STATUS COMO '0' NA ESCRITA.
