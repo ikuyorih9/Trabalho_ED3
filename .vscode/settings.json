@@ -2,6 +2,7 @@
     "files.associations": {
         "insertinto.h": "c",
         "stdlib.h": "c",
-        "createtable.h": "c"
+        "createtable.h": "c",
+        "mensagenserro.h": "c"
     }
 }

@@ -21,8 +21,11 @@ remocaoLogica.o: ./src/remocaoLogica.c
 compactacao.o: ./src/compactacao.c
 	gcc -o ./src/compactacao.o -c ./src/compactacao.c
 
-programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o remocaoLogica.o compactacao.o
-	gcc -o programaTrab ./src/main.o ./src/createTable.o ./src/mensagensErro.o ./src/arquivos.o ./src/insertInto.o ./src/remocaoLogica.o ./src/compactacao.o
+limparBuffer.o: ./src/limparBuffer.c
+	gcc -o ./src/limparBuffer.o -c ./src/limparBuffer.c
+
+programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o remocaoLogica.o compactacao.o limparBuffer.o
+	gcc -o programaTrab ./src/main.o ./src/createTable.o ./src/mensagensErro.o ./src/arquivos.o ./src/insertInto.o ./src/remocaoLogica.o ./src/compactacao.o ./src/limparBuffer.o
 
 run:
 	./programaTrab

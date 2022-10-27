@@ -1,6 +1,7 @@
 #include "insertInto.h"
 #include "mensagensErro.h"
 #include "arquivos.h"
+#include "limparBuffer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,12 +11,7 @@ int retornaRRNRegistroDisponivel(RegCab * registroCabecalho, FILE * arquivo);
 int retornaValorInteiro(char * linha, int numCampo);
 char * retornaValorString(char *linha, int numCampo);
 
-void flush (){
-    int ch;
-    while ((ch = fgetc(stdin)) != EOF && (ch != '\n'))
-    {
-    }   
-}
+
 
 void insertInto(const char * nomeArquivo){
     //3 "Campina Grande" "Brazil" "BR" 4 "G" 10
@@ -35,7 +31,7 @@ void insertInto(const char * nomeArquivo){
 
     int n;
     scanf("%d", &n);
-    flush();
+    limparBuffer();
     for(int i = 0; i < n; i++){
         int rrnDisponivel = retornaRRNRegistroDisponivel(&registroCabecalho, arquivo);
         int offset =  TAM_PAG + rrnDisponivel*TAM_REG_DADOS;

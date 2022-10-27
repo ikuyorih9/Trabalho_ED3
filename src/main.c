@@ -6,6 +6,7 @@
 #include "insertInto.h"
 #include "remocaoLogica.h"
 #include "compactacao.h"
+#include "limparBuffer.h"
 
 int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
@@ -20,7 +21,7 @@ int main(){
         case 1:
             scanf("%s", nomeEntrada);
             scanf("%s", nomeSaida);
-            fflush(stdin);
+            limparBuffer();
             createTable(nomeEntrada, nomeSaida);
             break;
         case 2:
