@@ -9,5 +9,5 @@ void imprimeErroArquivo(){
 }
 
 void registroNaoAlocado(){
-    printf("O registro nao esta alocado!");
+    printf("Registro inexistente.\n");
 }

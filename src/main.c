@@ -7,6 +7,7 @@
 #include "remocaoLogica.h"
 #include "compactacao.h"
 #include "limparBuffer.h"
+#include "recuperaDados.h"
 
 int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
@@ -25,6 +26,9 @@ int main(){
             createTable(nomeEntrada, nomeSaida);
             break;
         case 2:
+            scanf("%s", nomeEntrada);
+            limparBuffer();
+            recuperaDados(nomeEntrada);
             break;
         case 3:
             break;

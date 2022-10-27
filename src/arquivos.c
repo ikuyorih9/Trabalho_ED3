@@ -44,6 +44,52 @@ char * retornaDiretorio(const char caminho[32], const char * nomeArquivo){
     LEITURA DE REGISTROS E AFINS.
  ***********************************/
 
+//IMPRIME REGISTRO DA POSIÇÃO OFFSET
+void imprimeRegistro(int offset, FILE * arquivo){
+    RegDados registroDados;
+    char * removido = retornaCampoFixoString(offset, 1, arquivo);
+    registroDados.removido = *removido;
+    if (registroDados.removido == '1') {
+        registroNaoAlocado();
+        printf("\n");
+        return;
+    }
+    registroDados.idConecta = retornaCampoFixoInteiro(offset + 5, arquivo);
+    registroDados.siglaPais = retornaCampoFixoString(offset + 9, 2, arquivo);
+    registroDados.idPoPsConectado = retornaCampoFixoInteiro(offset + 11, arquivo);
+    registroDados.unidadeMedida = retornaCampoFixoString(offset + 15, 1, arquivo);
+    registroDados.velocidade = retornaCampoFixoInteiro(offset + 16, arquivo);
+    registroDados.nomePoPs = retornaCampoVariavel(offset + 20, arquivo);
+    registroDados.nomePais = retornaCampoVariavel(offset + 20 + strlen(registroDados.nomePoPs) + 1, arquivo);
+    
+    if (registroDados.idConecta != -1)
+        printf("Identificador do ponto: %d\n", registroDados.idConecta);
+
+    if(registroDados.nomePoPs[0] != '\0')
+        printf("Nome do ponto: %s\n", registroDados.nomePoPs);
+    
+    if(registroDados.nomePais[0] != '\0')
+        printf("Pais de localizacao: %s\n", registroDados.nomePais);
+    
+    if(registroDados.siglaPais[0] != '$')
+        printf("Sigla do pais: %s\n", registroDados.siglaPais);
+    
+    if(registroDados.idPoPsConectado != -1)
+        printf("Identificador do ponto conectado: %d\n", registroDados.idPoPsConectado);
+    
+    if(registroDados.velocidade != -1){
+        printf("Velocidade de transmissao: %d ", registroDados.velocidade);
+        printf("%sbps\n", registroDados.unidadeMedida);
+    }
+    printf("\n");
+
+    free(registroDados.siglaPais);
+    free(registroDados.unidadeMedida);
+    free(registroDados.nomePoPs);
+    free(registroDados.nomePais);
+
+}
+
 //RETORNA VALOR DE UM CAMPO INTEIRO DA POSIÇÃO 'posCursor'.
 int retornaCampoFixoInteiro(int posCursor, FILE * arquivo){
     int campo;

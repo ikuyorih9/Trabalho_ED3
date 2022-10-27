@@ -24,8 +24,11 @@ compactacao.o: ./src/compactacao.c
 limparBuffer.o: ./src/limparBuffer.c
 	gcc -o ./src/limparBuffer.o -c ./src/limparBuffer.c
 
-programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o remocaoLogica.o compactacao.o limparBuffer.o
-	gcc -o programaTrab ./src/main.o ./src/createTable.o ./src/mensagensErro.o ./src/arquivos.o ./src/insertInto.o ./src/remocaoLogica.o ./src/compactacao.o ./src/limparBuffer.o
+recuperaDados.o: ./src/recuperaDados.c
+	gcc -o ./src/recuperaDados.o -c ./src/recuperaDados.c
+
+programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o remocaoLogica.o compactacao.o limparBuffer.o recuperaDados.o
+	gcc -o programaTrab ./src/main.o ./src/createTable.o ./src/mensagensErro.o ./src/arquivos.o ./src/insertInto.o ./src/remocaoLogica.o ./src/compactacao.o ./src/limparBuffer.o ./src/recuperaDados.o
 
 run:
 	./programaTrab

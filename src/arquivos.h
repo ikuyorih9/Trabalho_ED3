@@ -39,6 +39,7 @@ char * retornaDiretorio(const char caminho[32], const char * nomeArquivo);
     LEITURA DE REGISTROS E AFINS.
  ***********************************/
 
+void imprimeRegistro(int offset, FILE * arquivo);
 int retornaCampoFixoInteiro(int posCursor, FILE * arquivo);
 char * retornaCampoFixoString(int posCursor, int numBytes,FILE * arquivo);
 char * retornaCampoVariavel(int offset, FILE * arquivo);
