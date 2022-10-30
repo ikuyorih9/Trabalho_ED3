@@ -40,7 +40,8 @@ char * retornaDiretorio(const char caminho[32], const char * nomeArquivo);
 /************************
     BUSCA DE REGISTROS.
 *************************/
-RegDados * buscaRegistros(char * nomeCampo, char * valorCampo, int * rrnRegistros, RegCab * registroCabecalho, FILE * arquivo);
+void buscaApagaRegistros(char * nomeCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo);
+void buscaImprimeRegistros(char * nomeCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo);
 int buscaCampoFixoInteiro(int inicio, int idCampo, int valorCampo, RegCab * registroCabecalho, FILE * arquivo);
 int buscaCampoFixoString(int inicio, int idCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo);
 int buscaCampoVariavel(int inicio, int idCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo);

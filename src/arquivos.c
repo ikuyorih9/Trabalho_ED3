@@ -44,27 +44,23 @@ char * retornaDiretorio(const char caminho[32], const char * nomeArquivo){
     BUSCA DE REGISTROS.
 *************************/
 
-RegDados * buscaRegistros(char * nomeCampo, char * valorCampo, int * rrnRegistros, RegCab * registroCabecalho, FILE * arquivo){
-    RegDados * registroDados = malloc(sizeof(RegDados) * registroCabecalho->proxRRN);
+void buscaApagaRegistros(char * nomeCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo){
     int idCampo = retornaCampoID(nomeCampo);
     if(idCampo == -1)
-        return NULL;
+        return;
     
     //SE O CAMPO FOR 'idConecta' OU 'idPoPsConectado' OU 'velocidade'.
     if(idCampo == 0 || idCampo == 2 || idCampo == 4){
         int valorCampoInteiro = atoi(valorCampo);
         int registrosEncontrados = 0;
         int rrnCampo = -1;
-        int i = 0;
 
         while(!registrosEncontrados){
             rrnCampo = buscaCampoFixoInteiro(rrnCampo+1, idCampo, valorCampoInteiro, registroCabecalho, arquivo);
-            rrnRegistros[i] = rrnCampo;
             if(rrnCampo != -1)
-                registroDados[i] = retornaRegistroDados(rrnCampo, arquivo);
+                removeRegistroDados(rrnCampo, registroCabecalho, arquivo);
             else
                 registrosEncontrados = !registrosEncontrados;
-            i++;
         }
     }
 
@@ -72,36 +68,102 @@ RegDados * buscaRegistros(char * nomeCampo, char * valorCampo, int * rrnRegistro
     else if(idCampo == 1 || idCampo == 3){
         int registrosEncontrados = 0;
         int rrnCampo = -1;
-        int i = 0;
 
         while(!registrosEncontrados){
             rrnCampo = buscaCampoFixoString(rrnCampo+1, idCampo, valorCampo, registroCabecalho, arquivo);
-            rrnRegistros[i] = rrnCampo;
             if(rrnCampo != -1)
-                registroDados[i] = retornaRegistroDados(rrnCampo, arquivo);
+                removeRegistroDados(rrnCampo, registroCabecalho, arquivo);
             else
                 registrosEncontrados = !registrosEncontrados;
-            i++;
         }
     }
     //SE O CAMPO FOR 'nomePoPs' OU 'nomePais'.
     else{
         int registrosEncontrados = 0;
         int rrnCampo = -1;
-        int i = 0;
 
         while(!registrosEncontrados){
             rrnCampo = buscaCampoVariavel(rrnCampo+1, idCampo, valorCampo, registroCabecalho, arquivo);
-            rrnRegistros[i] = rrnCampo;
             if(rrnCampo != -1)
-                registroDados[i] = retornaRegistroDados(rrnCampo, arquivo);
+                removeRegistroDados(rrnCampo, registroCabecalho, arquivo);
             else
                 registrosEncontrados = !registrosEncontrados;
-            i++;
+        }
+    }
+}
+
+void buscaImprimeRegistros(char * nomeCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo){
+    int idCampo = retornaCampoID(nomeCampo);
+    if(idCampo == -1)
+        return;
+
+    int qtdRegistros = 0;
+
+    //SE O CAMPO FOR 'idConecta' OU 'idPoPsConectado' OU 'velocidade'.
+    if(idCampo == 0 || idCampo == 2 || idCampo == 4){
+        int valorCampoInteiro = atoi(valorCampo);
+        int registrosEncontrados = 0;
+        int rrnCampo = -1;
+
+        while(!registrosEncontrados){
+            rrnCampo = buscaCampoFixoInteiro(rrnCampo+1, idCampo, valorCampoInteiro, registroCabecalho, arquivo);
+            if(rrnCampo != -1){
+                RegDados registroDados = retornaRegistroDados(rrnCampo, arquivo);
+                imprimeRegistro(registroDados, arquivo);
+                qtdRegistros++;
+            }
+            else{
+                if(qtdRegistros == 0){
+                    registroNaoAlocado();
+                    printf("\n");
+                }
+                registrosEncontrados = !registrosEncontrados;
+            }
         }
     }
 
-    return registroDados;
+    //SE O CAMPO FOR 'siglaPais' OU 'unidadeMedida'.
+    else if(idCampo == 1 || idCampo == 3){
+        int registrosEncontrados = 0;
+        int rrnCampo = -1;
+
+        while(!registrosEncontrados){
+            rrnCampo = buscaCampoFixoString(rrnCampo+1, idCampo, valorCampo, registroCabecalho, arquivo);
+            if(rrnCampo != -1){
+                RegDados registroDados = retornaRegistroDados(rrnCampo, arquivo);
+                imprimeRegistro(registroDados, arquivo);
+                qtdRegistros++;
+            }
+            else{
+                if(qtdRegistros == 0){
+                    registroNaoAlocado();
+                    printf("\n");
+                }
+                registrosEncontrados = !registrosEncontrados;
+            }
+        }
+    }
+    //SE O CAMPO FOR 'nomePoPs' OU 'nomePais'.
+    else{
+        int registrosEncontrados = 0;
+        int rrnCampo = -1;
+
+        while(!registrosEncontrados){
+            rrnCampo = buscaCampoVariavel(rrnCampo+1, idCampo, valorCampo, registroCabecalho, arquivo);
+            if(rrnCampo != -1){
+                RegDados registroDados = retornaRegistroDados(rrnCampo, arquivo);
+                imprimeRegistro(registroDados, arquivo);
+                qtdRegistros++;
+            }
+            else{
+                if(qtdRegistros == 0){
+                    registroNaoAlocado();
+                    printf("\n");
+                }
+                registrosEncontrados = !registrosEncontrados;
+            }
+        }
+    }
 }
 
 int buscaCampoFixoInteiro(int inicio, int idCampo, int valorCampo, RegCab * registroCabecalho, FILE * arquivo){

@@ -29,7 +29,7 @@ Comando que imprime todos os registros de dados do arquivo binário.
   * **2.3. Erro:**
     * "Falha no processamento do arquivo."
 
-## **[3] IMPRESSÃO DE ARQUIVOS SELECIONADOS:**
+## **[3] IMPRESSÃO DE REGISTROS SELECIONADOS:**
 *_por: Mateus Messias._*
 
 Comando que imprime apenas os registros de campos específicos, indicados na entrada da funcionalidade.

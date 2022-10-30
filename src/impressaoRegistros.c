@@ -42,29 +42,12 @@ void impressaoRegistros(const char * nomeArquivo){
         char * valorCampo = separaCamposLinha(linha, 1);
         int idCampo = retornaCampoID(nomeCampo);
 
-        //RETORNA OS REGISTROS DE DADOS QUE CORRESPONDEM A BUSCA.
-        int * rrnRegistros = malloc(sizeof(int) * registroCabecalho.proxRRN);
-        RegDados * registrosDados = buscaRegistros(nomeCampo, valorCampo, rrnRegistros, &registroCabecalho, arquivo);
-
         printf("Busca %d\n", i);
-
-        //SE NÃO FOREM LIDOS NENHUM REGISTRO.
-        if(rrnRegistros[0] == -1){
-            registroNaoAlocado();
-            printf("\n");
-        }
-        else{
-            for(int j = 0; rrnRegistros[j] != -1; j++){
-                //IMPRIME O REGISTRO E LIBERA MEMÓRIA DE SUAS VARIÁVEIS.
-                imprimeRegistro(registrosDados[j], arquivo);
-                liberaRegistroDados(registrosDados[j]);
-            }
-        }
+        buscaImprimeRegistros(nomeCampo, valorCampo, &registroCabecalho, arquivo);
 
         //IMPRIME O NÚMERO DE PÁGINAS DE DISCO.
         printf("Numero de paginas de disco: %d\n\n", registroCabecalho.nPagDisco);
-        free(rrnRegistros);
-        free(registrosDados);
+
     }
     
     free(diretorioArquivo);
