@@ -2,16 +2,10 @@
 #include "mensagensErro.h"
 #include "arquivos.h"
 #include "limparBuffer.h"
+#include "insertInto.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-char * separaCamposLinha(char * linha, int numCampo);
-int retornaRRNRegistroDisponivel(RegCab * registroCabecalho, FILE * arquivo);
-int retornaValorInteiro(char * linha, int numCampo);
-char * retornaValorString(char *linha, int numCampo);
-
-
 
 void insertInto(const char * nomeArquivo){
     //3 "Campina Grande" "Brazil" "BR" 4 "G" 10

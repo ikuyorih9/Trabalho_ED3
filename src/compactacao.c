@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-void compactacao(const char nomeArquivo[64]){
+void compactacao(const char * nomeArquivo){
     char * diretorioArquivo = retornaDiretorio(DIR_ENTRADA, nomeArquivo);
     char * diretorioArquivoCompactado = retornaDiretorio(DIR_SAIDA, nomeArquivo);
 

@@ -35,6 +35,14 @@ typedef struct{
 void binarioNaTela(const char *nomeArquivoBinario);
 char * retornaDiretorio(const char caminho[32], const char * nomeArquivo);
 
+/************************
+    BUSCA DE REGISTROS.
+*************************/
+int * buscaRegistros(char * nomeCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo);
+int buscaCampoFixoInteiro(int inicio, int idCampo, int valorCampo, RegCab * registroCabecalho, FILE * arquivo);
+int buscaCampoFixoString(int inicio, int idCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo);
+int buscaCampoVariavel(int inicio, int idCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo);
+
 /***********************************
     LEITURA DE REGISTROS E AFINS.
  ***********************************/
@@ -43,6 +51,7 @@ void imprimeRegistro(int offset, FILE * arquivo);
 int retornaCampoFixoInteiro(int posCursor, FILE * arquivo);
 char * retornaCampoFixoString(int posCursor, int numBytes,FILE * arquivo);
 char * retornaCampoVariavel(int offset, FILE * arquivo);
+int retornaCampoID(char * nomeCampo);
 int retornaNumPaginasDisco(int numRegistros);
 RegCab retornaRegistroCabecalho(FILE * arquivo);
 

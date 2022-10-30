@@ -32,5 +32,6 @@ void recuperaDados(const char * nomeArquivo){
         printf("\n");
     }
     printf("Numero de paginas de disco: %d\n\n", registroCabecalho.nPagDisco);
+    free(diretorioArquivo);
     
 }

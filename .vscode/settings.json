@@ -3,6 +3,9 @@
         "insertinto.h": "c",
         "stdlib.h": "c",
         "createtable.h": "c",
-        "mensagenserro.h": "c"
+        "mensagenserro.h": "c",
+        "limparbuffer.h": "c",
+        "buscarregistros.h": "c",
+        "arquivos.h": "c"
     }
 }
