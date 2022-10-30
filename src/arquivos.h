@@ -30,6 +30,8 @@ typedef struct{
     int velocidade;
     char * nomePoPs;
     char * nomePais;
+
+    int registroAlocado; //variável de controle em RAM.
 }RegDados;
 
 void binarioNaTela(const char *nomeArquivoBinario);
@@ -38,7 +40,7 @@ char * retornaDiretorio(const char caminho[32], const char * nomeArquivo);
 /************************
     BUSCA DE REGISTROS.
 *************************/
-int * buscaRegistros(char * nomeCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo);
+RegDados * buscaRegistros(char * nomeCampo, char * valorCampo, int * rrnRegistros, RegCab * registroCabecalho, FILE * arquivo);
 int buscaCampoFixoInteiro(int inicio, int idCampo, int valorCampo, RegCab * registroCabecalho, FILE * arquivo);
 int buscaCampoFixoString(int inicio, int idCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo);
 int buscaCampoVariavel(int inicio, int idCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo);
@@ -47,13 +49,17 @@ int buscaCampoVariavel(int inicio, int idCampo, char * valorCampo, RegCab * regi
     LEITURA DE REGISTROS E AFINS.
  ***********************************/
 
-void imprimeRegistro(int offset, FILE * arquivo);
-int retornaCampoFixoInteiro(int posCursor, FILE * arquivo);
-char * retornaCampoFixoString(int posCursor, int numBytes,FILE * arquivo);
+void imprimeRegistro(RegDados registroDados, FILE * arquivo);
+void liberaRegistroDados(RegDados registroDados);
+void moveCursor(int offset, FILE * arquivo);
+int retornaCampoFixoInteiro(int offset, FILE * arquivo);
+char * retornaCampoFixoString(int offset, int numBytes,FILE * arquivo);
 char * retornaCampoVariavel(int offset, FILE * arquivo);
 int retornaCampoID(char * nomeCampo);
 int retornaNumPaginasDisco(int numRegistros);
+RegDados retornaRegistroDados(int rrn, FILE * arquivo);
 RegCab retornaRegistroCabecalho(FILE * arquivo);
+
 
 /*************************************
     MODIFICAÇÃO DE REGISTROS EM DISCO.
@@ -68,7 +74,7 @@ void mudarCampoString(int offset, char * campo, int tamCampo, FILE * arquivo);
     INSERÇÃO E REMOÇÃO DE REGISTROS EM DISCO.
 *********************************************/
 
-void alocarRegistroCabecalho(RegCab registroCabecalho, FILE * out);
+void alocarRegistroCabecalho(RegCab registroCabecalho, FILE * arquivo);
 void insereRegistroDados(int offset, RegDados registroDados, FILE * arquivo);
 void removeRegistroDados(int rrnRegistro, RegCab * registroCabecalho, FILE * arquivo);
 

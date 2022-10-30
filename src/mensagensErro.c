@@ -1,13 +1,11 @@
 #include <stdio.h>
 
-void imprimeErroRRN(){
-    printf("Nao foi possivel ler o arquivo.\n");
-}
-
+//ERRO AO ABRIR O ARQUIVO PARA LEITURA/ESCRITA.
 void imprimeErroArquivo(){
     printf("Falha no processamento do arquivo.\n");
 }
 
+//ERRO AO IMPRIMIR REGISTROS INEXISTENTES.
 void registroNaoAlocado(){
     printf("Registro inexistente.\n");
 }

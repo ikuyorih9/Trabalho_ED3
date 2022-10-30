@@ -1,11 +1,11 @@
-# TRABALHO PRÁTICO 1 - ESTRUTURA DE DADOS III
+# **TRABALHO PRÁTICO 1 - ESTRUTURA DE DADOS III**
 
 Desenvolvido por:
 * Hugo Hiroyuki Nakamura
 * Mateus Santos Messias
----
 
-# Funcionalidades
+---
+# **Funcionalidades**
 ## **[1] CREATE TABLE:** 
 *_por: Hugo Nakamura._*
 
@@ -16,6 +16,31 @@ Comando para criar uma nova tabela. Recebe como entradas o nome dos arquivos CSV
   * **1.2. Saída:**
     * Os bits do arquivo binário.
   * **1.3. Erro:**
+    * "Falha no processamento do arquivo."
+
+## **[2] IMPRESSÃO DOS REGISTROS:**
+*_por: Mateus Messias._*
+
+Comando que imprime todos os registros de dados do arquivo binário.
+  * **2.1. Entrada:**
+    * Diretório do arquivo binário dos registros.
+  * **2.2. Saída:**
+    * Todos os registros do arquivo de dados.
+  * **2.3. Erro:**
+    * "Falha no processamento do arquivo."
+
+## **[3] IMPRESSÃO DE ARQUIVOS SELECIONADOS:**
+*_por: Mateus Messias._*
+
+Comando que imprime apenas os registros de campos específicos, indicados na entrada da funcionalidade.
+
+  * **3.1. Entrada:**
+    * Diretório do arquivo binário dos registros;
+    * Número de seleções desejadas;
+    * Os respectivos campos e seus valores;
+  * **3.2. Saída:**
+    * Os registros de dados selecionados.
+  * **3.3. Erro:**
     * "Falha no processamento do arquivo."
 
 ## **[4] REMOÇÃO LÓGICA:** 
@@ -55,5 +80,43 @@ Comando que retira todos os registros removidos de um arquivo. Ele funciona a pa
   * **6.3. Erro:**
     * "Falha no processamento do arquivo."
 
-  
 
+---
+# **ARQUIVOS.**
+>## **in**
+* arquivos **binários** de entrada;
+* arquivos **csv** de entrada;
+
+>## **out**
+* arquivos **binários** de saída;
+
+> ## **src**
+* "**arquivos.c**" e "**arquivos.h**": 
+Arquivos com todas as funcionalidades relacionadas a manipulação de registros (ex: remoção, inserção, impressão, leitura, posicionamento de cursor etc.).
+
+* "**mensagensErro.c**" e "**mensagensErro.h**":
+Arquivo com funções de impressão de erro.
+
+* "**limparBuffer.c**" e "**limparBuffer.h**":
+Arquivo com uma função de limpar o buffer da entrada padrão do sistema.
+
+* "**createTable.c**" e "**createTable.h**":
+Arquivos com a funcionalidade [1] Create Table.
+
+* "**recuperaDados.c**" e "**recuperaDados.h**":
+Arquivos com a funcionalidade [2] Select All.
+
+* "**impressaoRegistros.c**" e "**impressaoRegistros.h**":
+Arquivos com a funcionalidade [3] Select From.
+
+* "**remocaoLogica.c**" e "**remocaoLogica.h**":
+Arquivos com a funcionalidade [4] Remoção Lógica.
+
+* "**insertInto.c**" e "**insertInto.h**":
+Arquivos com a funcionalidade [5] Insert Into.
+
+* "**compactacao.c**" e "**compactacao.h**":
+Arquivos com a funcionalidade [6] Compactação.
+
+> ## **Makefile**
+Arquivo Makefile para compilação dos códigos.

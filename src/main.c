@@ -8,7 +8,7 @@
 #include "compactacao.h"
 #include "limparBuffer.h"
 #include "recuperaDados.h"
-#include "buscarRegistros.h"
+#include "impressaoRegistros.h"
 
 int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
@@ -33,7 +33,7 @@ int main(){
             break;
         case 3:
             scanf("%s", nomeEntrada);
-            buscarRegistros(nomeEntrada);
+            impressaoRegistros(nomeEntrada);
             break;
         case 4:
             scanf("%s", nomeEntrada);

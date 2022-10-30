@@ -6,9 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char delimitador = '|';
-const char simboloRemovido = '1';
-
 void binarioNaTela(const char *nomeArquivoBinario) { /* Você não precisa entender o código dessa função. */
 
 	unsigned long i, cs;
@@ -47,8 +44,8 @@ char * retornaDiretorio(const char caminho[32], const char * nomeArquivo){
     BUSCA DE REGISTROS.
 *************************/
 
-int * buscaRegistros(char * nomeCampo, char * valorCampo, RegCab * registroCabecalho, FILE * arquivo){
-    int * rrnRegistros = malloc(sizeof(int) * registroCabecalho->proxRRN);
+RegDados * buscaRegistros(char * nomeCampo, char * valorCampo, int * rrnRegistros, RegCab * registroCabecalho, FILE * arquivo){
+    RegDados * registroDados = malloc(sizeof(RegDados) * registroCabecalho->proxRRN);
     int idCampo = retornaCampoID(nomeCampo);
     if(idCampo == -1)
         return NULL;
@@ -56,43 +53,55 @@ int * buscaRegistros(char * nomeCampo, char * valorCampo, RegCab * registroCabec
     //SE O CAMPO FOR 'idConecta' OU 'idPoPsConectado' OU 'velocidade'.
     if(idCampo == 0 || idCampo == 2 || idCampo == 4){
         int valorCampoInteiro = atoi(valorCampo);
+        int registrosEncontrados = 0;
         int rrnCampo = -1;
         int i = 0;
-        do{
+
+        while(!registrosEncontrados){
             rrnCampo = buscaCampoFixoInteiro(rrnCampo+1, idCampo, valorCampoInteiro, registroCabecalho, arquivo);
             rrnRegistros[i] = rrnCampo;
+            if(rrnCampo != -1)
+                registroDados[i] = retornaRegistroDados(rrnCampo, arquivo);
+            else
+                registrosEncontrados = !registrosEncontrados;
             i++;
         }
-        while(rrnCampo != -1);
-        rrnRegistros[i] = -1;
     }
 
     //SE O CAMPO FOR 'siglaPais' OU 'unidadeMedida'.
     else if(idCampo == 1 || idCampo == 3){
+        int registrosEncontrados = 0;
         int rrnCampo = -1;
         int i = 0;
-        do{
+
+        while(!registrosEncontrados){
             rrnCampo = buscaCampoFixoString(rrnCampo+1, idCampo, valorCampo, registroCabecalho, arquivo);
             rrnRegistros[i] = rrnCampo;
+            if(rrnCampo != -1)
+                registroDados[i] = retornaRegistroDados(rrnCampo, arquivo);
+            else
+                registrosEncontrados = !registrosEncontrados;
             i++;
         }
-        while(rrnCampo != -1);
-        rrnRegistros[i] = -1;
     }
     //SE O CAMPO FOR 'nomePoPs' OU 'nomePais'.
     else{
+        int registrosEncontrados = 0;
         int rrnCampo = -1;
         int i = 0;
-        do{
+
+        while(!registrosEncontrados){
             rrnCampo = buscaCampoVariavel(rrnCampo+1, idCampo, valorCampo, registroCabecalho, arquivo);
             rrnRegistros[i] = rrnCampo;
+            if(rrnCampo != -1)
+                registroDados[i] = retornaRegistroDados(rrnCampo, arquivo);
+            else
+                registrosEncontrados = !registrosEncontrados;
             i++;
         }
-        while(rrnCampo != -1);
-        rrnRegistros[i] = -1;
     }
 
-    return rrnRegistros;
+    return registroDados;
 }
 
 int buscaCampoFixoInteiro(int inicio, int idCampo, int valorCampo, RegCab * registroCabecalho, FILE * arquivo){
@@ -199,23 +208,26 @@ int buscaCampoVariavel(int inicio, int idCampo, char * valorCampo, RegCab * regi
 *********************************************/
 
 //CRIA REGISTRO DE CABEÇALHO.
-void alocarRegistroCabecalho(RegCab registroCabecalho, FILE * out){
+void alocarRegistroCabecalho(RegCab registroCabecalho, FILE * arquivo){
+    //APONTA PARA O INÍCIO DO ARQUIVO.
+    moveCursor(0, arquivo);
 
     //ESCREVE OS CAMPOS NO ARQUIVO BINARIO.
-    fwrite(&registroCabecalho.status, sizeof(char), 1, out);
-    fwrite(&registroCabecalho.topo, sizeof(int), 1, out);
-    fwrite(&registroCabecalho.proxRRN, sizeof(int), 1, out);
-    fwrite(&registroCabecalho.nRegRem, sizeof(int),1,out);
-    fwrite(&registroCabecalho.nPagDisco, sizeof(int),1,out);
-    fwrite(&registroCabecalho.qtdCompacta, sizeof(int),1,out);
-    insereLixo(TAM_REG_CAB, TAM_PAG, out);          
+    fwrite(&registroCabecalho.status, sizeof(char), 1, arquivo);
+    fwrite(&registroCabecalho.topo, sizeof(int), 1, arquivo);
+    fwrite(&registroCabecalho.proxRRN, sizeof(int), 1, arquivo);
+    fwrite(&registroCabecalho.nRegRem, sizeof(int),1,arquivo);
+    fwrite(&registroCabecalho.nPagDisco, sizeof(int),1,arquivo);
+    fwrite(&registroCabecalho.qtdCompacta, sizeof(int),1,arquivo);
+    insereLixo(TAM_REG_CAB, TAM_PAG, arquivo);          
 }
 
 //INSERE UM NOVO REGISTRO DE DADOS.
 void insereRegistroDados(int offset, RegDados registroDados, FILE * arquivo){
-                            
+    const char delimitador = '|';
+
     //VAI AO OFFSET 'posCursor' DO RRN A SE INSERIR.
-    fseek(arquivo, offset, SEEK_SET);
+    moveCursor(offset, arquivo);
 
     //ESCREVE OS CAMPOS FIXOS NO ARQUIVO BINARIO.
     fwrite(&registroDados.removido, sizeof(char), 1, arquivo);
@@ -273,7 +285,8 @@ void removeRegistroDados(int rrnRegistro, RegCab * registroCabecalho, FILE * arq
 
     //EMPILHA O TOPO E OBTEM O VALOR DO ENCADEAMENTO A SE COLOCAR NO REGISTRO REMOVIDO.
     int encadeamento = empilharRemovido(rrnRegistro, registroCabecalho);
-    fseek(arquivo, offset, SEEK_SET);
+    moveCursor(offset, arquivo);
+    const char simboloRemovido = '1';
     fwrite(&simboloRemovido, sizeof(char), 1, arquivo); //escreve a remoção como '1'.
     fwrite(&encadeamento, sizeof(int), 1, arquivo); //escreve o encadeamento com 'encadeamento'.
 
@@ -283,8 +296,6 @@ void removeRegistroDados(int rrnRegistro, RegCab * registroCabecalho, FILE * arq
     //INCREMENTA O NÚMERO DE REGISTROS REMOVIDOS NO CABEÇALHO.
     registroCabecalho->nRegRem++;
 
-    //printf("Registro %d removido!\n", rrnRegistro);
-
 }
 
 
@@ -293,20 +304,9 @@ void removeRegistroDados(int rrnRegistro, RegCab * registroCabecalho, FILE * arq
  ***********************************/
 
 //IMPRIME REGISTRO DA POSIÇÃO OFFSET
-void imprimeRegistro(int offset, FILE * arquivo){
-    RegDados registroDados;
-    char * removido = retornaCampoFixoString(offset, 1, arquivo);
-    registroDados.removido = *removido;
+void imprimeRegistro(RegDados registroDados, FILE * arquivo){
     if (registroDados.removido == '1') 
         return;
-        
-    registroDados.idConecta = retornaCampoFixoInteiro(offset + 5, arquivo);
-    registroDados.siglaPais = retornaCampoFixoString(offset + 9, 2, arquivo);
-    registroDados.idPoPsConectado = retornaCampoFixoInteiro(offset + 11, arquivo);
-    registroDados.unidadeMedida = retornaCampoFixoString(offset + 15, 1, arquivo);
-    registroDados.velocidade = retornaCampoFixoInteiro(offset + 16, arquivo);
-    registroDados.nomePoPs = retornaCampoVariavel(offset + 20, arquivo);
-    registroDados.nomePais = retornaCampoVariavel(offset + 20 + strlen(registroDados.nomePoPs) + 1, arquivo);
     
     if (registroDados.idConecta != -1)
         printf("Identificador do ponto: %d\n", registroDados.idConecta);
@@ -329,27 +329,40 @@ void imprimeRegistro(int offset, FILE * arquivo){
     }
     printf("\n");
 
-    free(removido);
-    free(registroDados.siglaPais);
-    free(registroDados.unidadeMedida);
-    free(registroDados.nomePoPs);
-    free(registroDados.nomePais);
+}
 
+//LIBERA AS VARIÁVEIS ALOCADAS DINAMICAMENTE DO REGISTRO DE DADOS.
+void liberaRegistroDados(RegDados registroDados){
+    if(registroDados.siglaPais != NULL)
+        free(registroDados.siglaPais);
+    if(registroDados.unidadeMedida != NULL)
+        free(registroDados.unidadeMedida);
+    if(registroDados.nomePoPs != NULL)
+        free(registroDados.nomePoPs);
+    if(registroDados.nomePais != NULL)
+        free(registroDados.nomePais);
+}
+
+//MOVE O CURSOR PARA A POSIÇÃO DESEJADA E EVITA SEEKS DESNECESSÁRIOS.
+void moveCursor(int offset, FILE * arquivo){
+    int posCursor = ftell(arquivo);
+    if(posCursor != offset)
+        fseek(arquivo, offset, SEEK_SET);
 }
 
 //RETORNA VALOR DE UM CAMPO INTEIRO DA POSIÇÃO 'posCursor'.
-int retornaCampoFixoInteiro(int posCursor, FILE * arquivo){
+int retornaCampoFixoInteiro(int offset, FILE * arquivo){
     int campo;
-    fseek(arquivo, posCursor, SEEK_SET);
+    moveCursor(offset, arquivo);
     fread(&campo, sizeof(int), 1, arquivo);
     return campo;
 }
 
 //RETORNA VALOR DE UM CAMPO INTEIRO DA POSIÇÃO 'posCursor'.
-char * retornaCampoFixoString(int posCursor, int numBytes,FILE * arquivo){
+char * retornaCampoFixoString(int offset, int numBytes,FILE * arquivo){
     char * campo = malloc(sizeof(char)*(numBytes+1));
 
-    fseek(arquivo, posCursor, SEEK_SET);
+    moveCursor(offset, arquivo);
     int i;
     for(i = 0; i < numBytes; i++){
         fread(&(campo[i]), sizeof(char), 1, arquivo);
@@ -361,7 +374,7 @@ char * retornaCampoFixoString(int posCursor, int numBytes,FILE * arquivo){
 }
 
 char * retornaCampoVariavel(int offset, FILE * arquivo){
-    fseek(arquivo, offset, SEEK_SET);
+    moveCursor(offset, arquivo);
     char * campo = malloc(sizeof(char)*64);
     char byteLido = 0;
     
@@ -414,7 +427,7 @@ int retornaNumPaginasDisco(int numRegistros){
 //RETORNA O REGISTRO DE CABEÇALHO NUMA STRUCT RegCab.
 RegCab retornaRegistroCabecalho(FILE * arquivo){
     RegCab registroCabecalho;
-    fseek(arquivo, 0, SEEK_SET);
+    moveCursor(0, arquivo);
     fread(&(registroCabecalho.status), sizeof(char), 1, arquivo);
     fread(&(registroCabecalho.topo), sizeof(int), 1, arquivo);
     fread(&(registroCabecalho.proxRRN), sizeof(int), 1, arquivo);
@@ -423,6 +436,40 @@ RegCab retornaRegistroCabecalho(FILE * arquivo){
     fread(&(registroCabecalho.qtdCompacta), sizeof(int), 1, arquivo);
 
     return registroCabecalho;
+}
+
+RegDados retornaRegistroDados(int rrn, FILE * arquivo){
+    int offset = TAM_PAG + rrn*TAM_REG_DADOS;
+    moveCursor(offset, arquivo);
+
+    RegDados registroDados;
+    char * removido = retornaCampoFixoString(offset, 1, arquivo);
+    registroDados.removido = *removido;
+    free(removido);
+
+    if(registroDados.removido == '1'){
+        registroDados.encadeamento = -1;
+        registroDados.idConecta = -1;
+        registroDados.siglaPais = NULL;
+        registroDados.idPoPsConectado = -1;
+        registroDados.unidadeMedida = NULL;
+        registroDados.velocidade = -1;
+        registroDados.nomePoPs = NULL;
+        registroDados.nomePais = NULL;
+        
+        return registroDados;
+    }
+    
+    registroDados.encadeamento = retornaCampoFixoInteiro(offset + 1, arquivo);
+    registroDados.idConecta = retornaCampoFixoInteiro(offset + 5, arquivo);
+    registroDados.siglaPais = retornaCampoFixoString(offset + 9, 2, arquivo);
+    registroDados.idPoPsConectado = retornaCampoFixoInteiro(offset + 11, arquivo);
+    registroDados.unidadeMedida = retornaCampoFixoString(offset + 15, 1, arquivo);
+    registroDados.velocidade = retornaCampoFixoInteiro(offset + 16, arquivo);
+    registroDados.nomePoPs = retornaCampoVariavel(offset + 20, arquivo);
+    registroDados.nomePais = retornaCampoVariavel(offset + 20 + strlen(registroDados.nomePoPs) + 1, arquivo);
+
+    return registroDados;
 }
 
 
@@ -442,21 +489,21 @@ int empilharRemovido(int rrnRemovido, RegCab * registroCabecalho){
 }
 
 //  PREENCHE LIXO NO REGISTRO DE 'nBytesLidos' até 'tamRegistro'.
-void insereLixo(int nBytesLidos, int tamRegistro, FILE * out){
+void insereLixo(int nBytesLidos, int tamRegistro, FILE * arquivo){
     char lixo = '$';
     for(int a = nBytesLidos; a < tamRegistro; a++)
-        fwrite(&lixo, sizeof(char), 1, out);
+        fwrite(&lixo, sizeof(char), 1, arquivo);
 }
 
 //  MUDA INTEIRO DO CAMPO NO OFFSET 'offset'.
 void mudarCampoInteiro(int offset, int campo, FILE * arquivo){
-    fseek(arquivo, offset, SEEK_SET);
+    moveCursor(offset, arquivo);
     fwrite(&campo, sizeof(int), 1, arquivo);
 }
 
 //  MUDA STRING DO CAMPO NO OFFSET 'offset'.
 void mudarCampoString(int offset, char * campo, int tamCampo, FILE * arquivo){
-    fseek(arquivo, offset, SEEK_SET);
+    moveCursor(offset, arquivo);
     fwrite(campo, sizeof(char), tamCampo, arquivo);
 
 }

@@ -33,12 +33,15 @@ void remocaoLogica(const char * nomeArquivo){
         char * valorCampo = separaCamposLinha(linha, 1);
         int idCampo = retornaCampoID(nomeCampo);
         
-        int * rrnRegistros = buscaRegistros(nomeCampo, valorCampo, &registroCabecalho, arquivo);
+        int * rrnRegistros = malloc(sizeof(int) * registroCabecalho.proxRRN);
+        RegDados * registrosDados = buscaRegistros(nomeCampo, valorCampo, rrnRegistros, &registroCabecalho, arquivo);
 
         for(int j = 0; rrnRegistros[j] != -1; j++){
-            removeRegistroDados(rrnRegistros[j], &registroCabecalho, arquivo);                
+            removeRegistroDados(rrnRegistros[j], &registroCabecalho, arquivo);  
+            liberaRegistroDados(registrosDados[j]);              
         }
         free(rrnRegistros);
+        free(registrosDados);
     }
     registroCabecalho.status = '1';
     mudarCampoString(0, &(registroCabecalho.status), 1, arquivo);     //ATUALIZA CONSISTENCIA status NO ARQUIVO BINARIO.
