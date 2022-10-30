@@ -7,9 +7,11 @@
 
 
 void compactacao(const char * nomeArquivo){
+    //CRIA OS DIRETÓRIOS DO ARQUIVO A SE COMPACTAR E DO COMPACTADO.
     char * diretorioArquivo = retornaDiretorio(DIR_ENTRADA, nomeArquivo);
     char * diretorioArquivoCompactado = retornaDiretorio(DIR_SAIDA, nomeArquivo);
 
+    //ABRE OS ARQUIVOS E OS VERIFICA.
     FILE * arquivo = fopen(diretorioArquivo, "rb");
     FILE * arquivoCompactado = fopen(diretorioArquivoCompactado, "wb");
 
@@ -17,13 +19,15 @@ void compactacao(const char * nomeArquivo){
         imprimeErroArquivo();
         return;
     }
-    
+
+    //LÊ O REGISTRO DE CABEÇALHO DO DISCO.
     RegCab registroCabecalho = retornaRegistroCabecalho(arquivo);
     if(registroCabecalho.status == '0'){
         imprimeErroArquivo();
         return;
     }
 
+    //ALOCA REGISTRO DE CABEÇALHO DO ARQUIVO COMPACTADO NO DISCO.
     RegCab registroCabCompactado;
     registroCabCompactado.status = '0';
     registroCabCompactado.topo = -1;
@@ -31,48 +35,34 @@ void compactacao(const char * nomeArquivo){
     registroCabCompactado.nRegRem = 0;
     registroCabCompactado.nPagDisco = 0;
     registroCabCompactado.qtdCompacta = registroCabecalho.qtdCompacta + 1;
-
     alocarRegistroCabecalho(registroCabCompactado, arquivoCompactado);
 
     int qtdRegistros = registroCabecalho.proxRRN;
 
+    //PERCORRE TODOS OS REGISTROS DE DADOS DO ARQUIVO NÃO COMPACTADO.
     for(int i = 0; i < qtdRegistros; i++){
-        int offset = TAM_PAG + i*TAM_REG_DADOS;
-        char * removido = retornaCampoFixoString(offset, 1, arquivo);
-        if(*removido == '1'){
-            free(removido);
+        //LÊ O REGISTRO DE DADOS DO ARQUIVO NÃO COMPACTADO NO DISCO.
+        RegDados registroDados = retornaRegistroDados(i, arquivo);
+
+        //VERIFICA SE ESTÁ REMOVIDO.
+        if(registroDados.removido == '1')
             continue;
-        }
         
-        RegDados registroDados;
-        registroDados.removido = '0';
-        registroDados.encadeamento = -1;
-        registroDados.idConecta = retornaCampoFixoInteiro(offset + 5, arquivo);
-        registroDados.siglaPais = retornaCampoFixoString(offset + 9, 2, arquivo);
-        registroDados.idPoPsConectado = retornaCampoFixoInteiro(offset + 11, arquivo);
-        registroDados.unidadeMedida = retornaCampoFixoString(offset + 15, 1, arquivo);
-        registroDados.velocidade = retornaCampoFixoInteiro(offset + 16, arquivo);
-        
-        registroDados.nomePoPs = retornaCampoVariavel(offset + 20, arquivo);
-        registroDados.nomePais = retornaCampoVariavel(offset + 20 + strlen(registroDados.nomePoPs) + 1, arquivo);
-        
+        //INSERE O REGISTRO NÃO REMOVIDO NO ARQUIVO COMPACTADO.
         int offsetCompactado = TAM_PAG + registroCabCompactado.proxRRN*TAM_REG_DADOS;
         insereRegistroDados(offsetCompactado, registroDados, arquivoCompactado);
 
+        //INCREMENTA O PRÓXIMO RRN DISPONÍVEL.
         registroCabCompactado.proxRRN++;
 
-        free(removido);
-        free(registroDados.siglaPais);
-        free(registroDados.unidadeMedida);
-        free(registroDados.nomePoPs);
-        free(registroDados.nomePais);
+        //LIBERA AS VARIÁVEIS USADAS NO REGISTRO DE DADOS.
+        liberaRegistroDados(registroDados);
     }
 
+    //ATUALIZA REGISTRO DE CABEÇALHO DO ARQUIVO COMPACTADO.
     registroCabCompactado.status = '1';
     registroCabCompactado.nPagDisco = retornaNumPaginasDisco(registroCabCompactado.proxRRN) + 1;
-    mudarCampoString(0, &(registroCabCompactado.status), 1, arquivoCompactado);     //ATUALIZA CONSISTENCIA status NO ARQUIVO BINARIO.
-    mudarCampoInteiro(5, registroCabCompactado.proxRRN, arquivoCompactado);      //ATUALIZA proxRRN NO ARQUIVO BINARIO.
-    mudarCampoInteiro(13, registroCabCompactado.nPagDisco, arquivoCompactado);    //ATUALIZA nPagDisco NO ARQUIVO BINARIO.
+    alocarRegistroCabecalho(registroCabCompactado, arquivoCompactado);
 
 
     fclose(arquivo);

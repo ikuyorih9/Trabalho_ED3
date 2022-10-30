@@ -8,9 +8,7 @@
 #include <string.h>
 
 void insertInto(const char * nomeArquivo){
-    //3 "Campina Grande" "Brazil" "BR" 4 "G" 10
-    //22 "Teresina" NULO "BR" NULO NULO NULO
-
+    //CRIA DIRETORIO DO ARQUIVO A PARTIR DE SEU NOME.
     char * diretorioArquivo = retornaDiretorio(DIR_ENTRADA, nomeArquivo);
     FILE * arquivo = fopen(diretorioArquivo, "rb+");
     if(arquivo == NULL){
@@ -18,6 +16,7 @@ void insertInto(const char * nomeArquivo){
         return;
     }
 
+    //RECEBE REGISTRO DE CABEÇALHO E VERIFICA CONSISTÊNCIA.
     RegCab registroCabecalho = retornaRegistroCabecalho(arquivo);
     if(registroCabecalho.status == '0'){
         imprimeErroArquivo();
@@ -27,18 +26,22 @@ void insertInto(const char * nomeArquivo){
     registroCabecalho.status = '0';
     mudarCampoString(0, &(registroCabecalho.status), 1, arquivo);   //PÕE STATUS COMO '0' NA ESCRITA.
 
+    //RECEBE QUANTIDADE DE ITERAÇÕES.
     int n;
     scanf("%d", &n);
     limparBuffer();
+
     for(int i = 0; i < n; i++){
+        //PROCURA O PRÓXIMO RRN DISPONÍVEL (REMOVIDO OU NÃO).
         int rrnDisponivel = retornaRRNRegistroDisponivel(&registroCabecalho, arquivo);
         int offset =  TAM_PAG + rrnDisponivel*TAM_REG_DADOS;
         
+        //LÊ LINHA DE ENTRADA.
         char linha[128];
         fgets(linha, 128, stdin);
 
+        //SEPARA DADOS DA LINHA DE ENTRADA E PÕE NO REGISTRO EM RAM.
         RegDados registroDados;
-
         registroDados.removido = '0';
         registroDados.encadeamento = -1;
         registroDados.idConecta = retornaValorInteiro(linha, 0);
@@ -49,7 +52,7 @@ void insertInto(const char * nomeArquivo){
         registroDados.nomePoPs = retornaValorString(linha, 1);
         registroDados.nomePais = retornaValorString(linha, 2);
         
-
+        //INSERE REGISTRO EM DISCO.
         insereRegistroDados(offset, registroDados,arquivo);
 
         int proxRRN = registroCabecalho.proxRRN;
@@ -65,20 +68,21 @@ void insertInto(const char * nomeArquivo){
             if(nPagDisco != registroCabecalho.nPagDisco)
                 registroCabecalho.nPagDisco = nPagDisco;
         }
+
+        //LIBERA VARIÁVEIS ALOCADAS DINAMICAMENTE NO REGISTRO DE DADOS.
+        liberaRegistroDados(registroDados);
     }
 
+    //MUDA CONSISTENCIA E ALOCA REGISTRO DE CABEÇALHO.
     registroCabecalho.status = '1';
-    mudarCampoString(0, &(registroCabecalho.status), 1, arquivo); //PÕE STATUS COMO '0' NA ESCRITA.
-    mudarCampoInteiro(1, registroCabecalho.topo, arquivo);      //ATUALIZA topo NO REGISTRO DE CABEÇALHO. 
-    mudarCampoInteiro(5, registroCabecalho.proxRRN, arquivo);   //ATUALIZA proxRRN NO REGISTRO DE CABEÇALHO.
-    mudarCampoInteiro(9, registroCabecalho.nRegRem, arquivo);   //ATUALIZA nRegRem NO REGISTRO DE CABEÇALHO.
-    mudarCampoInteiro(13, registroCabecalho.nPagDisco, arquivo); //ATUALIZA nPagDisco NO REGISTRO DE CABEÇALHO.
+    alocarRegistroCabecalho(registroCabecalho, arquivo);
 
     fclose(arquivo);
     binarioNaTela(diretorioArquivo);
     free(diretorioArquivo);
 }
 
+//DADA A LINHA, RETORNA UM VALOR INTEIRO CORRESPONDENTE AO CAMPO.
 int retornaValorInteiro(char * linha, int numCampo){
     char * campo = separaCamposLinha(linha, numCampo);
     int valorCampo;
@@ -91,6 +95,7 @@ int retornaValorInteiro(char * linha, int numCampo){
     return valorCampo;
 }
 
+//RETORNA O PRÓXIMO RRN DISPONÍVEL.
 int retornaRRNRegistroDisponivel(RegCab * registroCabecalho, FILE * arquivo){
     int topo = registroCabecalho->topo;
     int rrnDisponivel; //rrn onde vou colocar o regitro.
@@ -108,6 +113,7 @@ int retornaRRNRegistroDisponivel(RegCab * registroCabecalho, FILE * arquivo){
     return rrnDisponivel;
 }
 
+//DADA A LINHA, RETORNA UMA STRING CORRESPONDENTE AO CAMPO.
 char * retornaValorString(char *linha, int numCampo){
     char * campo = separaCamposLinha(linha, numCampo);
     int diferentes = strcmp(campo, "NULO");
@@ -117,6 +123,7 @@ char * retornaValorString(char *linha, int numCampo){
         return NULL;
 }
 
+//SEPARA A LINHA EM SEGMENTOS, E RETORNA O SEGMENTO CONFORME O CAMPO ESCOLHIDO.
 char * separaCamposLinha(char * linha, int numCampo){
     char * campo = malloc(sizeof(char*) * 128);
     int j = 0;

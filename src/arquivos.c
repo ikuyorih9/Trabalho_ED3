@@ -110,6 +110,7 @@ void buscaImprimeRegistros(char * nomeCampo, char * valorCampo, RegCab * registr
             if(rrnCampo != -1){
                 RegDados registroDados = retornaRegistroDados(rrnCampo, arquivo);
                 imprimeRegistro(registroDados, arquivo);
+                liberaRegistroDados(registroDados);
                 qtdRegistros++;
             }
             else{
@@ -132,6 +133,7 @@ void buscaImprimeRegistros(char * nomeCampo, char * valorCampo, RegCab * registr
             if(rrnCampo != -1){
                 RegDados registroDados = retornaRegistroDados(rrnCampo, arquivo);
                 imprimeRegistro(registroDados, arquivo);
+                liberaRegistroDados(registroDados);
                 qtdRegistros++;
             }
             else{
@@ -153,6 +155,7 @@ void buscaImprimeRegistros(char * nomeCampo, char * valorCampo, RegCab * registr
             if(rrnCampo != -1){
                 RegDados registroDados = retornaRegistroDados(rrnCampo, arquivo);
                 imprimeRegistro(registroDados, arquivo);
+                liberaRegistroDados(registroDados);
                 qtdRegistros++;
             }
             else{
