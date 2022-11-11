@@ -22,8 +22,8 @@ idConecta,nomePoPs,nomePais,siglaPais,idPoPsConectado,unidadeMedida,velocidade
 75,Luxembourg,Luxembourg,LU,76,G,10
 4,Joao Passoa,Brazil,BR,23,G,10
 73,Frankfurt,Germany,DE,,,
-107,Tallinn ,Estonia,EE,108,G,10
-91,Budapest ,Hungary,HU,95,G,10
+107,Tallinn,Estonia,EE,108,G,10
+91,Budapest,Hungary,HU,95,G,10
 67,,,CL,,,
 32,UCT,Chile,CL,45,G,1
 6,Belo Horizonte,Brazil,,17,G,10
@@ -53,11 +53,11 @@ idConecta,nomePoPs,nomePais,siglaPais,idPoPsConectado,unidadeMedida,velocidade
 73,Frankfurt,Germany,DE,74,G,5
 49,RedCLARA,Chile,CL,58,G,1
 14,,Brazil,BR,21,G,3
-106,Helsinki ,Finland,FI,,,
+106,Helsinki,Finland,FI,,,
 103,London,United Kingdom,UK,,,
 48,,,CL,67,G,1
 73,Frankfurt,Germany,DE,86,G,3
-108,Riga ,Latvia,LV,,,
+108,Riga,Latvia,LV,,,
 56,Temuco,Chile,CL,57,M,205
 72,Poznan,Poland,PL,99,G,10
 63,AURA,Chile,CL,,,
@@ -67,7 +67,7 @@ idConecta,nomePoPs,nomePais,siglaPais,idPoPsConectado,unidadeMedida,velocidade
 43,RC-12,,CL,58,G,1
 1,Recife,Brazil,BR,3,G,10
 35,UFRO,Chile,CL,45,G,3
-96,Zagreb ,Croatia,HR,97,G,5
+96,Zagreb,Croatia,HR,97,G,5
 51,La Serena,Chile,CL,52,M,205
 46,,,CL,59,G,1
 80,,,MD,82,G,1

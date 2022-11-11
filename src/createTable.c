@@ -13,7 +13,7 @@ void createTable(const char * nomeEntrada, const char * nomeSaida){
     char * diretorioEntrada = retornaDiretorio(DIR_ENTRADA, nomeEntrada);
     char * diretorioSaida = retornaDiretorio(DIR_SAIDA, nomeSaida);
 
-    FILE * in = fopen(diretorioEntrada, "rb");
+    FILE * in = fopen(diretorioEntrada, "r");
     FILE * out = fopen(diretorioSaida, "wb");
 
     if(in == NULL || out == NULL){
@@ -98,8 +98,10 @@ char * retornaCampoLinha(char * linha, int numCampo){
         }
         else{
             if(contCampo == numCampo){
-                if(j == 0)
+                if(j == 0 || (j == 1 && numCampo == 6)){
+                    free(campo);
                     return NULL;
+                }
                 break;
             }
             else

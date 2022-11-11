@@ -1,3 +1,15 @@
+/*
+    Hugo Hiroyuki Nakamura (12732037) - 100%
+        Create Table [1]
+        Remoção Lógica [4]
+        Insert Into [5]
+        Compactação [6]
+    Mateus Santos Messias (12548000) - 100%
+        Impressão de todos os registros [3]
+        Select dos registros [4]
+*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
