@@ -30,8 +30,14 @@ recuperaDados.o: ./src/recuperaDados.c
 impressaoRegistros.o: ./src/impressaoRegistros.c
 	gcc -o ./src/impressaoRegistros.o -c ./src/impressaoRegistros.c
 
-programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o remocaoLogica.o compactacao.o limparBuffer.o recuperaDados.o impressaoRegistros.o
-	gcc -o programaTrab ./src/main.o ./src/createTable.o ./src/mensagensErro.o ./src/arquivos.o ./src/insertInto.o ./src/remocaoLogica.o ./src/compactacao.o ./src/limparBuffer.o ./src/recuperaDados.o ./src/impressaoRegistros.o
+arvoreB.o: ./src/arvoreB.c
+	gcc -o ./src/arvoreB.o -c ./src/arvoreB.c
+
+createIndex.o: ./src/createIndex.c
+	gcc -o ./src/createIndex.o -c ./src/createIndex.c
+
+programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o remocaoLogica.o compactacao.o limparBuffer.o recuperaDados.o impressaoRegistros.o arvoreB.o createIndex.o
+	gcc -o programaTrab ./src/main.o ./src/createTable.o ./src/mensagensErro.o ./src/arquivos.o ./src/insertInto.o ./src/remocaoLogica.o ./src/compactacao.o ./src/limparBuffer.o ./src/recuperaDados.o ./src/impressaoRegistros.o ./src/arvoreB.o ./src/createIndex.o
 
 run:
 	./programaTrab

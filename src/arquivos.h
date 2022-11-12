@@ -9,6 +9,8 @@
 #define DIR_ENTRADA "in/"
 #define DIR_SAIDA "out/"
 
+#define TAM_DIR 64
+
 #include <stdio.h>
 
 typedef struct{

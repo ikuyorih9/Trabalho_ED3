@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "arquivos.h"
+#include "arvoreB.h"
 #include "createTable.h"
 #include "insertInto.h"
 #include "remocaoLogica.h"
@@ -21,14 +22,15 @@
 #include "limparBuffer.h"
 #include "recuperaDados.h"
 #include "impressaoRegistros.h"
+#include "createIndex.h"
 
 int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
     //FILE* out = fopen("../out/topologiaRede.bin","wb");
 
     int comando;
-    char nomeEntrada[64];
-    char nomeSaida[64];
+    char nomeEntrada[TAM_DIR];
+    char nomeSaida[TAM_DIR];
     scanf("%d", &comando);
 
     switch(comando){
@@ -58,6 +60,12 @@ int main(){
         case 6:
             scanf("%s", nomeEntrada);
             compactacao(nomeEntrada);
+            break;
+        case 7:
+            scanf("%s", nomeEntrada);
+            scanf("%s", nomeSaida);
+            limparBuffer();
+            createIndex(nomeEntrada, nomeSaida);
             break;
     }
 
