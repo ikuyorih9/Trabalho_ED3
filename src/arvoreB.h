@@ -25,7 +25,7 @@ typedef struct{
     int ponteiros[5];
     int chaves[4];
     int referencias[4];
-}ArvoreDados
+}ArvoreDados;
 
 void alocaArvoreCabecalho(ArvoreCab cabecalho, FILE * arquivo);
 ArvoreCab retornaCabecalhoArvore(FILE * arquivo);
