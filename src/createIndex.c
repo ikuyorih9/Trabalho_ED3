@@ -27,13 +27,16 @@ void createIndex(const char * nomeEntrada, const char * nomeSaida){
     ArvoreCab cabecalho = criaCabecalhoArvore();
     alocaArvoreCabecalho(cabecalho, arquivoSaida);
 
-
-    ArvoreDados dadosArvore = criaArvoreDados();
     //LÊ TODOS OS REGISTROS DO ARQUIVO DE ENTRADA.
     for(int i = 0; i < registroCabecalho.proxRRN; i++){
-        int rrnDisponivel = buscaArvore(cabecalho, arquivo);
-        ArvoreDados dados = criaArvoreDados();
-        dados.noRRN = rrnDisponivel;
+        //LÊ UM REGISTRO DE DADOS.
+        RegDados registroDados = retornaRegistroDados(i, arquivoEntrada);
+        
+        int chave = registroDados.idConecta;
+
+        //PROCURA O RRN DO NÓ FOLHA A SE INSERIR.
+        int rrnDisponivel = buscaArvore(cabecalho.raiz, chave, arquivoSaida);
+        
         for(int i = 0; i < ORDEM_ARV; i++){
             
         }

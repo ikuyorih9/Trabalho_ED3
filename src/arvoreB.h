@@ -31,8 +31,9 @@ void alocaArvoreCabecalho(ArvoreCab cabecalho, FILE * arquivo);
 ArvoreCab retornaCabecalhoArvore(FILE * arquivo);
 ArvoreCab criaCabecalhoArvore();
 
-ArvoreDados criaArvoreDados();
+ArvoreDados criaArvoreDados(int rrn);
+ArvoreDados retornaArvoreDados(int rrnNo, FILE * arquivo);
 
-int buscaArvore(ArvoreCab cabecalho, int noRRN, FILE * arquivo);
-
+//int buscaArvore(ArvoreCab cabecalho, int valor, FILE * arquivo);
+int buscaArvore(int rrnAtual, int valor, FILE * arquivo);
 #endif
