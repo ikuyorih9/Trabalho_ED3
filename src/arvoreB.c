@@ -1,50 +1,58 @@
 #include "arvoreB.h"
 #include "arquivos.h"
+#include "mensagensErro.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-int retornaOffsetArvore(int rrnArvore){
-    return (rrnArvore + 1) * TAM_PAG_ARV;
+/*********************
+    MÉTODOS A PARTE.
+**********************/
+
+int calculaOffset(int rrn, FILE * arquivo){
+    return (rrn + 1) * TAM_PAG_ARV;
 }
 
-void alocaArvoreCabecalho(ArvoreCab cabecalho, FILE * arquivo){
-    moveCursor(0,arquivo);
+NucleoNo criaNucleo(int idConecta, int rrnDado){
+    NucleoNo nucleoNo;
+    nucleoNo.filhoEsq = -1;
+    nucleoNo.chave = idConecta;
+    nucleoNo.rrnReferencia = rrnDado;
+    nucleoNo.filhoDir = -1;
 
-    fwrite(&cabecalho.status, sizeof(char), 1, arquivo);
-    fwrite(&cabecalho.raiz, sizeof(int), 1, arquivo);
-    fwrite(&cabecalho.nChavesTotal, sizeof(int), 1, arquivo);
-    fwrite(&cabecalho.alturaArvore, sizeof(int), 1, arquivo);
-    fwrite(&cabecalho.proxNoRRN, sizeof(int), 1, arquivo);
+    return nucleoNo;
+}
+
+int retornaFilhoRRN(int chave, ArvoreDados no){
+    int rrn = -1;
+    for(int i = 0; i < no.nChavesNo; i++){
+        NucleoNo nucleoNo = no.nucleo[i];
+        if(rrn == -1)
+            rrn = nucleoNo.filhoEsq;
+        if(chave > nucleoNo.chave)
+            rrn = nucleoNo.filhoDir;
+        else if(chave == nucleoNo.chave)
+            return -1;
+    }
+    return rrn;
+}
+
+
+
+/*
+    MANIPULAÇÃO DO CABEÇALHO DA ÁRVORE;
+*/
+
+void alocaCabecalhoArvore(ArvoreCab * cabecalho, FILE * arquivo){
+    fseek(arquivo, 0 , SEEK_SET);
+    fwrite(&(cabecalho->status), sizeof(char), 1, arquivo);
+    fwrite(&(cabecalho->raiz), sizeof(int), 1, arquivo);
+    fwrite(&(cabecalho->nChavesTotal), sizeof(int), 1, arquivo);
+    fwrite(&(cabecalho->alturaArvore), sizeof(int), 1, arquivo);
+    fwrite(&(cabecalho->proxNoRRN), sizeof(int), 1, arquivo);
     insereLixo(TAM_CAB_ARV, TAM_PAG_ARV, arquivo);
 }
 
-void alocaArvoreDados(int rrnNo, ArvoreDados dados, FILE * arquivo){
-    int offset = retornaOffsetArvore(rrnNo);
-    moveCursor(offset, arquivo);
-    fwrite(&dados.folha, sizeof(char), 1, arquivo);
-    fwrite(&dados.nChavesNo, sizeof(int), 1, arquivo);
-    fwrite(&dados.alturaNo, sizeof(int), 1, arquivo);
-    fwrite(&dados.noRRN, sizeof(int), 1, arquivo);
-    for(int i = 0; i < ORDEM_ARV; i++){
-        fwrite(&dados.ponteiros[i], sizeof(int), 1, arquivo);
-        fwrite(&dados.chaves[i], sizeof(char), 1, arquivo);
-        fwrite(&dados.referencias[i], sizeof(int), 1, arquivo);
-    }
-    fwrite(&dados.ponteiros[4], sizeof(int), 1, arquivo);
-}
-
-ArvoreCab retornaCabecalhoArvore(FILE * arquivo){
-    ArvoreCab cabecalho;
-    moveCursor(0, arquivo);
-    fread(&cabecalho.status, sizeof(char), 1, arquivo);
-    fread(&cabecalho.raiz, sizeof(int), 1, arquivo);
-    fread(&cabecalho.nChavesTotal, sizeof(int), 1, arquivo);
-    fread(&cabecalho.alturaArvore, sizeof(int), 1, arquivo);
-    fread(&cabecalho.proxNoRRN, sizeof(int), 1, arquivo);
-    return cabecalho;
-}
-
-ArvoreCab criaCabecalhoArvore(){
+ArvoreCab criaCabecalho(){
     ArvoreCab cabecalho;
     cabecalho.status = '0';
     cabecalho.raiz = -1;
@@ -54,162 +62,331 @@ ArvoreCab criaCabecalhoArvore(){
     return cabecalho;
 }
 
-ArvoreDados criaArvoreDados(int rrn){
-    ArvoreDados dados;
-    dados.folha = '1';
-    dados.nChavesNo = 0;
-    dados.alturaNo = 1;
-    dados.noRRN = rrn;
-    for(int i = 0; i < ORDEM_ARV; i++){
-        dados.ponteiros[i] = -1;
-        dados.chaves[i] = -1;
-        dados.referencias[i] = -1;
-        if(i == ORDEM_ARV-1)
-            dados.ponteiros[i+1] = -1;
-    }
-    return dados;
+ArvoreCab retornaCabecalhoArvore(FILE * arquivo){
+    ArvoreCab cabecalho;
+
+    fseek(arquivo, 0, SEEK_SET);
+    fread(&(cabecalho.status), sizeof(char), 1, arquivo);
+    fread(&(cabecalho.raiz), sizeof(int), 1, arquivo);
+    fread(&(cabecalho.nChavesTotal), sizeof(int), 1, arquivo);
+    fread(&(cabecalho.alturaArvore), sizeof(int), 1, arquivo);
+    fread(&(cabecalho.proxNoRRN), sizeof(int), 1, arquivo);
+
+    return cabecalho;
 }
 
-ArvoreDados retornaArvoreDados(int rrnNo, FILE * arquivo){
-    int offset = retornaOffsetArvore(rrnNo);
-    moveCursor(offset, arquivo);
-    ArvoreDados dados;
-    fread(&dados.folha, sizeof(char), 1, arquivo);
-    fread(&dados.nChavesNo, sizeof(int), 1, arquivo);
-    fread(&dados.alturaNo, sizeof(int), 1, arquivo);
-    fread(&dados.noRRN, sizeof(int), 1, arquivo);
-    for(int i = 0; i < ORDEM_ARV; i++){
-        fread(&dados.ponteiros[i], sizeof(int), 1, arquivo);
-        fread(&dados.chaves[i], sizeof(char), 1, arquivo);
-        fread(&dados.referencias[i], sizeof(int), 1, arquivo);
-    }
-    fread(&dados.ponteiros[4], sizeof(int), 1, arquivo);
-}
+/*********************************
+    MANIPULAÇÃO DE NÓS DA ÁRVORE.
+**********************************/
 
-int buscaArvore(int rrnAtual, int valor, FILE * arquivo){
-    if(rrnAtual == -1)
+int buscaRRNRegistroArvore(int chave, int rrn, FILE * arquivo){
+    if(rrn == -1){
         return -1;
-
-    ArvoreDados dados = retornaArvoreDados(rrnAtual, arquivo); 
+    }
     
-    if(dados.folha == '1'){
-        return rrnAtual;
+    ArvoreDados no = retornaNoArquivo(rrn, arquivo);
+    for(int i = 0; i < no.nChavesNo; i++){
+        //PROCURA  SE A CHAVE ESTÁ NO NÓ ATUAL.
+        if(no.nucleo[i].chave == chave)
+            //RETORNA O RRN DO REGISTRO REFERENTE A ESSA CHAVE.
+            return no.nucleo[i].rrnReferencia;
     }
-
-    if(valor < dados.chaves[0]){
-        int rrn = dados.ponteiros[0];
-        return buscaArvore(rrn, valor, arquivo);
-    }
-    else if(valor > dados.chaves[0] && valor < dados.chaves[1]){
-        int rrn = dados.ponteiros[1];
-        return buscaArvore(rrn, valor, arquivo);
-    }
-    else if(valor > dados.chaves[1] && valor < dados.chaves[2]){
-        int rrn = dados.ponteiros[2];
-        return buscaArvore(rrn, valor, arquivo);
-    }
-    else if(valor > dados.chaves[2] && valor < dados.chaves[3]){
-        int rrn = dados.ponteiros[3];
-        return buscaArvore(rrn, valor, arquivo);
-    }
-    else{
-        int rrn = dados.ponteiros[4];
-        return buscaArvore(rrn, valor, arquivo);
-    } 
+    //RECEBE O RRN DO NÓ FILHO.
+    int rrnFilhoArvore = retornaFilhoRRN(chave, no);
+    //BUSCA O REGISTRO NO RRN DO NÓ FILHO.
+    return buscaRRNRegistroArvore(chave, rrnFilhoArvore, arquivo);
 }
 
-void insereNoArvore(int chave, ArvoreCab * cabecalho, FILE * arquivo){
-    if(cabecalho->raiz == -1){
-        ArvoreDados dados = criaArvoreDados(cabecalho->proxNoRRN);
-        insereOrdenado(chave, &dados);
-
-        cabecalho->raiz = cabecalho->proxNoRRN;
-        (cabecalho->proxNoRRN)++;
-
-        dados.nChavesNo++;
-        dados.noRRN = cabecalho->raiz;
+ArvoreDados criaNo(ArvoreCab * cabecalho, FILE * arquivo){
+    ArvoreDados no;
+    no.folha = '1';
+    no.nChavesNo = 0;
+    no.alturaNo = 1;
+    no.noRRN = cabecalho->proxNoRRN;
+    for(int i = 0; i < MAX_CHAVES; i++){
+        no.nucleo[i] = criaNucleo(-1, -1);
+    }
     
-        alocaArvoreDados(cabecalho->raiz, dados, arquivo);
+    (cabecalho->proxNoRRN)++;
+
+    return no;
+}
+
+void imprimeNosSequencia(FILE * arquivo){
+    fseek(arquivo, 0, SEEK_END);
+    int qtd = (int)ftell(arquivo);
+    qtd = qtd/65;
+    qtd--;
+    for(int i = 0; i < qtd; i++){
+        ArvoreDados no = retornaNoArquivo(i, arquivo);
+        imprimeNo(no);
+        printf("\n");
+        system("pause");
+    }
+}
+
+void imprimeChavesOrdenado(int rrnNo, FILE * arquivo){
+    if(rrnNo == -1)
         return;
-    }
-
-    int split = insereNo(cabecalho->raiz, chave, cabecalho, arquivo);
-    if(split == -1)
-        //CRIAR NOVO NÓ PARA SER A RAIZ
-    
-}
-
-int insereNo(int rrnNo, int chave, ArvoreCab * cabecalho, FILE * arquivo){
-    ArvoreDados dados = retornaArvoreDados(rrnNo, arquivo);
-    //SE O NÓ É FOLHA[
-    
-    int split;
-    if(dados.folha == '1'){
-       //SE O NÓ NÃO ESTÁ CHEIO.
-       if(dados.nChavesNo < ORDEM_ARV){
-            insereOrdenado(chave, &dados);
-            alocaArvoreDados(dados.noRRN, dados, arquivo); //verificar o RRN
-            return -1;
-       }
-       //SE O NÓ ESTÁ CHEIO.
-       else{
-            //faz o split
-            //return split
-       }
-    }
-    //SE O NÓ NÃO FOLHA.
-    else{
-        int indice = retornaIndiceFilho(chave, dados);
-        int rrnFilho = dados.ponteiros[indice];
-        //INSERE NO FILHO APROPRIADO.
-        split = insereNo(rrnFilho, chave, cabecalho, arquivo);
-        //ponto da volta de uma inserção.
-    }
-
-    //AJEITAR OS SPLITS.
-    if(split != -1){
-        //tem espaço no no
-        if(dados.nChavesNo < ORDEM_ARV){
-            insereOrdenado(split, &dados);
+    ArvoreDados no = retornaNoArquivo(rrnNo, arquivo);
+    //imprimeNo(no);
+    for (int i = 0; i < no.nChavesNo; i++) {
+        if (i == 0){
+            imprimeChavesOrdenado(no.nucleo[i].filhoEsq, arquivo);
         }
-        //nao tem espaço no no
-        else{
-            //faz o split
-            return split;
-        }
+        printf("(%d,%d) ", no.alturaNo, no.nucleo[i].chave);
+        imprimeChavesOrdenado(no.nucleo[i].filhoDir, arquivo);
     }
-    return -1;
 }
 
-int retornaIndiceFilho(int chave, ArvoreDados dados){
-    if(chave < dados.chaves[0]){
-        return 0;
+void imprimeNo(ArvoreDados no){
+    printf("FOLHA : %c\n", no.folha);
+    printf("nChavesNo: %d\n", no.nChavesNo);
+    printf("alturaNo:%d\n", no.alturaNo);
+    printf("noRRN: %d\n", no.noRRN);
+
+    for(int i = 0; i < MAX_CHAVES; i++){
+        NucleoNo nucleoNo = no.nucleo[i];
+        printf("No %d:\n", i);
+        printf("\tRRN esquerdo: %d\n", nucleoNo.filhoEsq);
+        printf("\tChave: %d\n", nucleoNo.chave);
+        printf("\tRRN referencia: %d\n", nucleoNo.rrnReferencia);
+        printf("\tRRN direito: %d\n", nucleoNo.filhoDir);
     }
-    else if(chave > dados.chaves[0] && chave < dados.chaves[1]){
-        return 1;
-    }
-    else if(chave > dados.chaves[1] && chave < dados.chaves[2]){
-        return 2;
-    }
-    else if(chave > dados.chaves[2] && chave < dados.chaves[3]){
-        return 3;
-    }
-    else
-        return 4;
+    printf("------------------\n");
 }
 
-int insereOrdenado(int valorChave, ArvoreDados * dados){
-    if(dados->folha == '0')
-        return 0;
-    int maior = valorChave;
+void insereNoArquivo(ArvoreDados no, FILE * arquivo){
+    int offset = calculaOffset(no.noRRN, arquivo);
+    //printf("inserindo No no rrn %d\n", no.noRRN);
+    //printf("inserindo no offset(rrn) %x(%d)\n", offset, no.noRRN);
+    moveCursor(offset, arquivo);
+
+    int sucesso = 1;
+
+    sucesso *= fwrite(&(no.folha), sizeof(char), 1, arquivo);
+    sucesso *= fwrite(&(no.nChavesNo), sizeof(int), 1, arquivo);
+    sucesso *= fwrite(&(no.alturaNo), sizeof(int), 1, arquivo);
+    sucesso *= fwrite(&(no.noRRN), sizeof(int), 1, arquivo);
+
+    for(int i = 0; i < MAX_CHAVES; i++){
+        NucleoNo * nucleoNo = &no.nucleo[i];
+        if(i == 0)
+            sucesso *= fwrite(&(nucleoNo->filhoEsq), sizeof(int), 1, arquivo);
+        sucesso *= fwrite(&(nucleoNo->chave), sizeof(int), 1, arquivo);
+        sucesso *= fwrite(&(nucleoNo->rrnReferencia), sizeof(int), 1, arquivo);
+        sucesso *= fwrite(&(nucleoNo->filhoDir), sizeof(int), 1, arquivo);
+    }
+    if(!sucesso)
+        imprimeErroEscrita(offset);
+}
+
+ArvoreDados retornaNoArquivo(int rrn, FILE * arquivo){
+    int offset = calculaOffset(rrn, arquivo);
+    moveCursor(offset, arquivo);
+
+    ArvoreDados no;
+
+    fread(&(no.folha), sizeof(char), 1, arquivo);
+    fread(&(no.nChavesNo), sizeof(int), 1, arquivo);
+    fread(&(no.alturaNo), sizeof(int), 1, arquivo);
+    fread(&(no.noRRN), sizeof(int), 1, arquivo);
+
+    int filhoDireita = -1;
+    for(int i = 0; i < MAX_CHAVES; i++){
+        NucleoNo * nucleoNo = &no.nucleo[i];
+        if(i == 0)
+            fread(&(nucleoNo->filhoEsq), sizeof(int), 1, arquivo);
+        else
+            nucleoNo->filhoEsq = filhoDireita;
+        fread(&(nucleoNo->chave), sizeof(int), 1, arquivo);
+        fread(&(nucleoNo->rrnReferencia), sizeof(int), 1, arquivo);
+        fread(&(nucleoNo->filhoDir), sizeof(int), 1, arquivo);
+        filhoDireita = nucleoNo->filhoDir;
+    }
+
+    return no;
+}
+
+
+void insereOrdenadoNo(NucleoNo nucleoNo, ArvoreDados * no){
     int i;
-    for(i = 0; i < dados->nChavesNo; i++){
-        if(dados->chaves[i] > maior){
-            int aux = dados->chaves[i];
-            dados->chaves[i] = maior;
-            maior = aux;
+    //PERCORRE TODOS OS NÓS DA ÁRVORE.
+    for (i = 0; i < no->nChavesNo; i++) {
+        //SE O VALOR DA CHAVE DO NÓ ATUAL FOR MAIOR QUE A CHAVE 'maior'.
+        if (no->nucleo[i].chave > nucleoNo.chave) {
+            //TROCA O NÚCLEO DA ARVORE PELO NÚCLEO nucleoNo.
+            NucleoNo aux;
+            aux = no->nucleo[i];
+            no->nucleo[i] = nucleoNo;
+            nucleoNo = aux;
         }
     }
-    dados->chaves[i] = maior;
-    return 1;
+    no->nucleo[i] = nucleoNo;
+    (no->nChavesNo)++;
 }
+
+NucleoNo * insereDivideNo(NucleoNo nucleo, ArvoreDados *no, ArvoreCab * cabecalho, FILE * arquivo){
+    //printf("Dividindo no...\n");
+    int idConecta = nucleo.chave;
+    NucleoNo * nucleoPromovido = NULL;
+    ArvoreDados novoNo = criaNo(cabecalho, arquivo);
+    int i, j;
+    int indicePromocao = (ORDEM_ARV/2);
+    int salvaFilho;
+    for(i = 0, j = i-(indicePromocao + 1); i < MAX_CHAVES; i++, j++){
+        //COPIA PARA O NÓ ATUAL.
+        if(i <= indicePromocao){
+            //TROCA nucleo COM O NUCLEO DO NÓ ORDENADAMENTE.
+            if(no->nucleo[i].chave > nucleo.chave){
+                NucleoNo aux = no->nucleo[i];
+                no->nucleo[i] = nucleo;
+                nucleo = aux;
+                nucleo.filhoEsq = no->nucleo[i].filhoDir;
+            }
+            //SE ESTIVER NA POSIÇÃO DE PROMOÇÃO, SALVA O NÚCLEO.
+            if(i == indicePromocao){
+                nucleoPromovido = malloc(sizeof(NucleoNo));
+                *nucleoPromovido = no->nucleo[i];
+                nucleoPromovido->filhoEsq = no->noRRN;
+                nucleoPromovido->filhoDir = novoNo.noRRN;
+                //isso só funciona se o promovido vier de um promovido.
+                //na inserção de um nó promovido
+                //é preciso que o seu nucleo esquerdo e seu nucleo direito
+                //sejam atualizados pro valor do nucleo recebido.
+                no->nucleo[i-1].filhoDir = no->nucleo[i].filhoEsq;
+                salvaFilho = no->nucleo[i].filhoDir;
+                no->nucleo[i] = criaNucleo(-1,-1); 
+            }
+        }
+        //COPIA PARA O NOVO NÓ CRIADO.
+        else{
+            if(no->nucleo[i].chave > nucleo.chave){
+                //COPIA O NUCLEO DE nucleo PARA O novoNo.
+                novoNo.nucleo[j] = nucleo;
+                nucleo = no->nucleo[i];
+            }
+            else{
+                //COPIA O NUCLEO DE no PARA O novoNo
+                novoNo.nucleo[j] = no->nucleo[i];
+            }
+            if(j == 0)
+                novoNo.nucleo[0].filhoEsq = salvaFilho;
+            //APAGA NUCLEO DO NÓ ATUAL.
+            no->nucleo[i] = criaNucleo(-1, -1);
+        }
+    }
+    novoNo.nucleo[j] = nucleo; //adiciona o ultimo termo.
+    novoNo.folha = no->folha;
+    novoNo.alturaNo = no->alturaNo;
+
+    no->nChavesNo = indicePromocao;
+    novoNo.nChavesNo = MAX_CHAVES - no->nChavesNo;
+
+    insereNoArquivo(*no, arquivo);
+    
+
+    // printf("No esquerdo:\n");
+    // imprimeNo(*no);
+    insereNoArquivo(novoNo, arquivo);
+    // printf("No direito: \n");
+    // imprimeNo(novoNo);
+
+    // printf("Nucleo promovido: (%d, %d, %d, %d)\n", nucleoPromovido->filhoEsq, nucleoPromovido->chave, nucleoPromovido->rrnReferencia, nucleoPromovido->filhoDir);
+
+    return nucleoPromovido;
+}
+
+NucleoNo * insereNucleoNo(NucleoNo * nucleo, ArvoreDados * no, ArvoreCab * cabecalho, FILE * arquivo){
+    NucleoNo * nucleoPromovido = NULL;
+    //SE HÁ ESPAÇO NO NÓ.
+    if(no->nChavesNo < MAX_CHAVES){
+       // printf("Existe espaco! Altura do no: %d. Inserindo...\n", no->alturaNo);
+        //insere o núcleo no Nó.
+        insereOrdenadoNo(*nucleo, no);
+        // //atualiza arquivo.
+    }
+    //SE NÃO HÁ ESPAÇO NO NÓ.
+    else{
+        //printf("sem espaco no RRN %d!\n", no->noRRN);
+        //DIVIDE O NÓ E RETORNA A SUA PROMOÇÃO.
+        nucleoPromovido = insereDivideNo(*nucleo, no, cabecalho, arquivo); //aqui volta o núcleo criado que ainda vai ser inserido.
+        //printf("Nucleo promovido: (%d, %d, %d, %d)\n", nucleoPromovido->filhoEsq, nucleoPromovido->chave, nucleoPromovido->rrnReferencia, nucleoPromovido->filhoDir);
+    }
+    free(nucleo);
+    return nucleoPromovido;
+}
+
+NucleoNo * insereNo(int idConecta, int rrnRef, int rrn, int alturaNo, ArvoreCab * cabecalho, FILE * arquivo){
+    NucleoNo * nucleoPromocao = NULL;
+    //SE O RRN É -1, CRIA-SE UM NOVO NÓ.
+    if(rrn == -1){
+        NucleoNo * raiz = malloc(sizeof(NucleoNo));
+        *raiz = criaNucleo(idConecta, rrnRef);
+        return raiz;
+    }
+
+    //POSICIONA LEITOR NA POSIÇÃO DO NÓ.
+    int offset = calculaOffset(rrn, arquivo);
+    moveCursor(offset, arquivo);
+
+    //ABRE A ÁRVORE DO ARQUIVO.
+    ArvoreDados no = retornaNoArquivo(rrn, arquivo);
+
+    //SE É UM NÓ FOLHA.
+    if(no.folha == '1'){
+        NucleoNo  * novoNucleo = malloc(sizeof(NucleoNo));
+        *novoNucleo = criaNucleo(idConecta, rrnRef);
+        nucleoPromocao = insereNucleoNo(novoNucleo, &no, cabecalho, arquivo);
+    }
+    //SE NÃO É UM NÓ FOLHA.
+    else{
+        //TENTA INSERIR NÓ NO FILHO APROPRIADO.
+        int rrnFilho = retornaFilhoRRN(idConecta, no);
+        NucleoNo * nucleoPromovido = insereNo(idConecta, rrnRef, rrnFilho, alturaNo-1, cabecalho, arquivo);
+        //printf("Voltando da recursao. Altura: %d\n", alturaNo);
+
+        //SE HOUVER UM NÚCLEO PROMOVIDO DA RECURSÃO.
+        if(nucleoPromovido != NULL){
+            //TENTA INSERIR O NÚCLEO PROMOVIDO NO NÓ ATUAL.
+            nucleoPromocao = insereNucleoNo(nucleoPromovido, &no, cabecalho, arquivo);
+        }
+    }
+    no.alturaNo = alturaNo;
+    insereNoArquivo(no, arquivo);
+    return nucleoPromocao;
+}
+
+void insereNoArvore(int idConecta, int rrnRef, ArvoreCab * cabecalho, FILE * arquivo){
+    NucleoNo * nucleoPromovido = insereNo(idConecta, rrnRef,cabecalho->raiz, cabecalho->alturaArvore, cabecalho, arquivo);
+    //SE HOUVER PROMOÇÃO DE UM NÓ.
+    if(nucleoPromovido != NULL){
+        //CRIA UM NOVO NÓ.
+        ArvoreDados no = criaNo(cabecalho, arquivo);
+        //no.alturaNo = cabecalho->alturaArvore;
+        //SE NÃO HOUVER UMA RAIZ, ENTÃO O NÓ CRIADO É FOLHA.
+        if(cabecalho->raiz == -1)
+            no.folha = '1';
+        else
+            no.folha = '0';
+
+        //ATUALIZA CABEÇALHO.
+        cabecalho->raiz = no.noRRN;
+        cabecalho->alturaArvore++;
+        no.alturaNo = cabecalho->alturaArvore;
+        //printf("Nova raiz criada no RRN %d. Altura da arvore agora e %d\n", no.noRRN, cabecalho->alturaArvore);
+
+        //INSERE O NUCLEO PROMOVIDO NO NOVO NÓ CRIADO.
+        insereOrdenadoNo(*nucleoPromovido, &no);
+        insereNoArquivo(no, arquivo);
+
+        //LIBERA MEMORIA.
+        free(nucleoPromovido);
+        //printf("\n");
+        //system("pause");
+    }
+    //printf("\n");
+    cabecalho->nChavesTotal++;
+}
+
+

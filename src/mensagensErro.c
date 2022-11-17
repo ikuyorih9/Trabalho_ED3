@@ -9,3 +9,7 @@ void imprimeErroArquivo(){
 void registroNaoAlocado(){
     printf("Registro inexistente.\n");
 }
+
+void imprimeErroEscrita(int offset){
+    printf("Nao foi possivel escrever o arquivo (%x).\n", offset);
+}

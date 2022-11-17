@@ -4,5 +4,6 @@
 void imprimeErroRRN();
 void imprimeErroArquivo();
 void registroNaoAlocado();
+void imprimeErroEscrita(int offset);
 
 #endif

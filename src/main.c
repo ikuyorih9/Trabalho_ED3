@@ -23,49 +23,74 @@
 #include "recuperaDados.h"
 #include "impressaoRegistros.h"
 #include "createIndex.h"
+#include "recuperaArvore.h"
+#include "insercaoArvore.h"
+#include "recuperaConectados.h"
 
 int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
     //FILE* out = fopen("../out/topologiaRede.bin","wb");
 
     int comando;
-    char nomeEntrada[TAM_DIR];
-    char nomeSaida[TAM_DIR];
+    char nomeArquivo1[TAM_DIR];
+    char nomeArquivo2[TAM_DIR];
+    char nomeCampo1[16];
+    char nomeCampo2[16]; 
+    char nomeIndice[TAM_DIR];
     scanf("%d", &comando);
 
     switch(comando){
         case 1:
-            scanf("%s", nomeEntrada);
-            scanf("%s", nomeSaida);
+            scanf("%s", nomeArquivo1);
+            scanf("%s", nomeArquivo2);
             limparBuffer();
-            createTable(nomeEntrada, nomeSaida);
+            createTable (nomeArquivo1, nomeArquivo2);
             break;
         case 2:
-            scanf("%s", nomeEntrada);
+            scanf("%s", nomeArquivo1);
             limparBuffer();
-            recuperaDados(nomeEntrada);
+            recuperaDados (nomeArquivo1);
             break;
         case 3:
-            scanf("%s", nomeEntrada);
-            impressaoRegistros(nomeEntrada);
+            scanf("%s", nomeArquivo1);
+            impressaoRegistros (nomeArquivo1);
             break;
         case 4:
-            scanf("%s", nomeEntrada);
-            remocaoLogica(nomeEntrada);
+            scanf("%s", nomeArquivo1);
+            remocaoLogica (nomeArquivo1);
             break;
         case 5:
-            scanf("%s", nomeEntrada);
-            insertInto(nomeEntrada);
+            scanf("%s", nomeArquivo1);
+            insertInto (nomeArquivo1);
             break;
         case 6:
-            scanf("%s", nomeEntrada);
-            compactacao(nomeEntrada);
+            scanf("%s", nomeArquivo1);
+            compactacao (nomeArquivo1);
             break;
         case 7:
-            scanf("%s", nomeEntrada);
-            scanf("%s", nomeSaida);
+            scanf("%s", nomeArquivo1);
+            scanf("%s", nomeArquivo2);
             limparBuffer();
-            createIndex(nomeEntrada, nomeSaida);
+            
+            createIndex (nomeArquivo1, nomeArquivo2);
+            break;
+        case 8:
+            scanf("%s", nomeArquivo1);
+            scanf("%s", nomeArquivo2);
+            recuperaArvore (nomeArquivo1, nomeArquivo2);
+            break;
+        case 9:
+            scanf("%s", nomeArquivo1);
+            scanf("%s", nomeArquivo2);
+            insercaoArvore(nomeArquivo1, nomeArquivo2);
+            break;
+        case 10:
+            scanf("%s", nomeArquivo1);
+            scanf("%s", nomeArquivo2);
+            scanf("%s", nomeCampo1);
+            scanf("%s", nomeCampo2);
+            scanf("%s", nomeIndice);
+            recuperaConectados (nomeArquivo1, nomeArquivo2, nomeCampo1, nomeCampo2, nomeIndice);
             break;
     }
 

@@ -6,6 +6,7 @@
         "mensagenserro.h": "c",
         "limparbuffer.h": "c",
         "buscarregistros.h": "c",
-        "arquivos.h": "c"
+        "arquivos.h": "c",
+        "arvoreb.h": "c"
     }
 }
