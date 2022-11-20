@@ -52,6 +52,7 @@ ArvoreDados retornaNoArquivo(int rrn, FILE * arquivo);
 void insereOrdenadoNo(NucleoNo nucleoNo, ArvoreDados * no);
 NucleoNo * insereNo(int idConecta, int rrnRef, int rrn, int alturaNo, ArvoreCab * cabecalho, FILE * arquivo);
 void insereNoArvore(int idConecta, int rrnRef, ArvoreCab * cabecalho, FILE * arquivo);
+NucleoNo * insereNucleoNo(NucleoNo * nucleo, ArvoreDados * no, ArvoreCab * cabecalho, FILE * arquivo);
 
 
 #endif

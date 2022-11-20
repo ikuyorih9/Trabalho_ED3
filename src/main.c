@@ -82,7 +82,7 @@ int main(){
         case 9:
             scanf("%s", nomeArquivo1);
             scanf("%s", nomeArquivo2);
-            insercaoArvore(nomeArquivo1, nomeArquivo2);
+        insercaoArvore(nomeArquivo1, nomeArquivo2);
             break;
         case 10:
             scanf("%s", nomeArquivo1);

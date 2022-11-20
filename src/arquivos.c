@@ -508,9 +508,7 @@ RegDados retornaRegistroDados(int rrn, FILE * arquivo){
     moveCursor(offset, arquivo);
 
     RegDados registroDados;
-    char * removido = retornaCampoFixoString(offset, 1, arquivo);
-    registroDados.removido = *removido;
-    free(removido);
+    fread(&registroDados.removido, sizeof(char), 1, arquivo);
 
     if(registroDados.removido == '1'){
         registroDados.encadeamento = -1;
