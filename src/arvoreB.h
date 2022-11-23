@@ -36,7 +36,7 @@ void imprimeChavesOrdenado(int rrnNo, FILE * arquivo);
 void imprimeNosSequencia(FILE * arquivo);
 int retornaFilhoRRN(int chave, ArvoreDados no);
 
-int buscaRRNRegistroArvore(int chave, int rrn, FILE * arquivo);
+int buscaRRNRegistroArvore(int chave, int rrn, int * numPags, FILE * arquivo);
 
 void alocaCabecalhoArvore(ArvoreCab * cabecalho, FILE * arquivo);
 ArvoreCab criaCabecalho();

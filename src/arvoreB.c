@@ -77,13 +77,14 @@ ArvoreCab retornaCabecalhoArvore(FILE * arquivo){
 **********************************/
 
 //Busca o RRN de registro do nó que contenha a 'chave', começando do nó de RRN 'rrn'.
-int buscaRRNRegistroArvore(int chave, int rrn, FILE * arquivo){
+int buscaRRNRegistroArvore(int chave, int rrn, int * numPags, FILE * arquivo){
     //Se o RRN 'rrn' recebido for -1, não há mais busca e retorna erro.
     if(rrn == -1){
         return -1;
     }
     
     ArvoreDados no = retornaNoArquivo(rrn, arquivo);
+    (*numPags)++; //Ocorre o acesso a outra página de disco.
     for(int i = 0; i < no.nChavesNo; i++){
         //Verifica se a chave está nó atual.
         if(no.nucleo[i].chave == chave)
@@ -94,7 +95,7 @@ int buscaRRNRegistroArvore(int chave, int rrn, FILE * arquivo){
     int rrnFilhoArvore = retornaFilhoRRN(chave, no);
 
     //Busca recursivamente.
-    return buscaRRNRegistroArvore(chave, rrnFilhoArvore, arquivo);
+    return buscaRRNRegistroArvore(chave, rrnFilhoArvore, numPags, arquivo);
 }
 
 //Cria e retorna um nó folha vazio em RAM.

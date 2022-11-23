@@ -48,7 +48,8 @@ void recuperaConectados(const char * nomeArquivo1, const char * nomeArquivo2, co
         int idPoPsConectado = dados1.idPoPsConectado;
         if(idPoPsConectado == -1)
             continue;
-        int rrnRegistro2 = buscaRRNRegistroArvore(idPoPsConectado, cabecalho.raiz, arquivoIndice2);
+        int numPags = 0;
+        int rrnRegistro2 = buscaRRNRegistroArvore(idPoPsConectado, cabecalho.raiz, &numPags, arquivoIndice2);
         if(rrnRegistro2 == -1)
             continue;
         RegDados dados2 = retornaRegistroDados(rrnRegistro2, arquivoRegistro2);
