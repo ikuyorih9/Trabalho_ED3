@@ -80,8 +80,19 @@ Comando que retira todos os registros removidos de um arquivo. Ele funciona a pa
   * **6.3. Erro:**
     * "Falha no processamento do arquivo."
 
-## **[7] COMPACTAÇÃO:**
-*_por: Hugo Nakamura._*
+## **[7] CREATE INDEX:**
+*_por: ???????._*
+
+Comando que retira todos os registros removidos de um arquivo. Ele funciona a partir de uma cópia de um arquivo para outro, mas apenas dos registros marcados com '0' no campo "removido".
+  * **7.1. Entrada:**
+    * Arquivo binário de dados e arquivo binário dos índices da árvore-B;
+  * **7.2. Saída:**
+    * Lista o arquivo binário dos índices da árvore-B
+  * **7.3. Erro:**
+    * "Falha no processamento do arquivo."
+
+## **[8] RECUPERA ARVORE:**
+*_por: ???????._*
 
 Comando que retira todos os registros removidos de um arquivo. Ele funciona a partir de uma cópia de um arquivo para outro, mas apenas dos registros marcados com '0' no campo "removido".
   * **6.1. Entrada:**
@@ -91,8 +102,8 @@ Comando que retira todos os registros removidos de um arquivo. Ele funciona a pa
   * **6.3. Erro:**
     * "Falha no processamento do arquivo."
 
-## **[8] COMPACTAÇÃO:**
-*_por: Hugo Nakamura._*
+## **[9] INSERÇÃO ARVORE:**
+*_por: ???????._*
 
 Comando que retira todos os registros removidos de um arquivo. Ele funciona a partir de uma cópia de um arquivo para outro, mas apenas dos registros marcados com '0' no campo "removido".
   * **6.1. Entrada:**
@@ -102,19 +113,8 @@ Comando que retira todos os registros removidos de um arquivo. Ele funciona a pa
   * **6.3. Erro:**
     * "Falha no processamento do arquivo."
 
-## **[9] COMPACTAÇÃO:**
-*_por: Hugo Nakamura._*
-
-Comando que retira todos os registros removidos de um arquivo. Ele funciona a partir de uma cópia de um arquivo para outro, mas apenas dos registros marcados com '0' no campo "removido".
-  * **6.1. Entrada:**
-    * Diretório do arquivo binário dos registros a se compactar;
-  * **6.2. Saída:**
-    * Os bits do arquivo binário compactado.
-  * **6.3. Erro:**
-    * "Falha no processamento do arquivo."
-
-## **[10] COMPACTAÇÃO:**
-*_por: Hugo Nakamura._*
+## **[10] RECUPERA CONECTADOS:**
+*_por: ???????._*
 
 Comando que retira todos os registros removidos de um arquivo. Ele funciona a partir de uma cópia de um arquivo para outro, mas apenas dos registros marcados com '0' no campo "removido".
   * **6.1. Entrada:**
