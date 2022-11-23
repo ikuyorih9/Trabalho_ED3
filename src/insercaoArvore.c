@@ -9,40 +9,49 @@
 #include <string.h>
 
 void insercaoArvore(const char * nomeArquivoRegistro, const char * nomeArquivoArvore){
-    //CRIA DIRETÓRIO DO ARQUIVO A PARTIR DE SEU NOME.
+    //Cria o diretório do arquivo de registros e do arquivo de índice.
     char * diretorioRegistro = retornaDiretorio(DIR_ENTRADA, nomeArquivoRegistro);
     char * diretorioArvore = retornaDiretorio(DIR_ENTRADA, nomeArquivoArvore);
 
+    //Abre os dois arquivos para leitura e escrita binária.
     FILE * arquivoRegistro = fopen(diretorioRegistro, "rb+");
     FILE * arquivoArvore = fopen(diretorioArvore, "rb+");
     
+    //Se algum dos arquivos não foi aberto corretamente, imprime uma mensagem de erro.
     if(arquivoRegistro == NULL || arquivoArvore == NULL){
         imprimeErroArquivo();
         return;
     }
     
+    //Obtém o registro de cabeçalho do arquivo de registros.
     RegCab registroCabecalho = retornaRegistroCabecalho(arquivoRegistro);
+
+    //Obtém o cabeçalho da árvore do arquivo de índices.
     ArvoreCab cabecalho = retornaCabecalhoArvore(arquivoArvore);
+
+    //Se algum dos arquivos apresentar inconsistência, imprime mensagem de erro.
     if(registroCabecalho.status == '0' || cabecalho.status == '0'){
         imprimeErroArquivo();
         return;
     }
 
-    //RECEBE QUANTIDADE DE ITERAÇÕES.
+    //Obtém a quantidade de registros a se inserir.
     int n;
     scanf("%d", &n);
-    limparBuffer();
+    limparBuffer(); //Limpa o buffer que resulta do '\n' do scanf.
 
+    //Laço que se repete 'n' vezes, onde 'n' é o número de inserções.
     for(int i = 0; i < n; i++){
-        //PROCURA O PRÓXIMO RRN DISPONÍVEL (REMOVIDO OU NÃO).
+        //Procura o próximo RRN disponível no arquivo de registros.
         int rrnDisponivel = retornaRRNRegistroDisponivel(&registroCabecalho, arquivoRegistro);
+
         int offset =  TAM_PAG + rrnDisponivel*TAM_REG_DADOS;
         
-        //LÊ LINHA DE ENTRADA.
+        //Lê a linha de entrada da funcionalidade.
         char linha[128];
         fgets(linha, 128, stdin);
 
-        //SEPARA DADOS DA LINHA DE ENTRADA E PÕE NO REGISTRO EM RAM.
+        //Separa a linha em cada atributo da struct de registro de dados.
         RegDados registroDados;
         registroDados.removido = '0';
         registroDados.encadeamento = -1;
@@ -54,9 +63,10 @@ void insercaoArvore(const char * nomeArquivoRegistro, const char * nomeArquivoAr
         registroDados.nomePoPs = retornaValorString(linha, 1);
         registroDados.nomePais = retornaValorString(linha, 2);
         
-        //INSERE REGISTRO EM DISCO.
+        //Insere o registro de dados no arquivo de registros.
         insereRegistroDados(offset, registroDados, arquivoRegistro);
-        //INSERE INDICE EM DISCO.
+
+        //Insere um nó ná arvore no arquivo de índices.
         insereNoArvore(registroDados.idConecta, rrnDisponivel, &cabecalho, arquivoArvore);
 
         int proxRRN = registroCabecalho.proxRRN;
@@ -82,12 +92,15 @@ void insercaoArvore(const char * nomeArquivoRegistro, const char * nomeArquivoAr
     alocarRegistroCabecalho(registroCabecalho, arquivoRegistro);
     alocaCabecalhoArvore(&cabecalho, arquivoArvore);
 
+    //Fecha os arquivos abertos.
     fclose(arquivoRegistro);
     fclose(arquivoArvore);
 
+    //Imprime o binário dos arquivos.
     binarioNaTela(diretorioRegistro);
     binarioNaTela(diretorioArvore);
 
+    //Libera o diretório dos arquivos.
     free(diretorioRegistro);
     free(diretorioArvore);
 }
