@@ -80,6 +80,50 @@ Comando que retira todos os registros removidos de um arquivo. Ele funciona a pa
   * **6.3. Erro:**
     * "Falha no processamento do arquivo."
 
+## **[7] COMPACTAÇÃO:**
+*_por: Hugo Nakamura._*
+
+Comando que retira todos os registros removidos de um arquivo. Ele funciona a partir de uma cópia de um arquivo para outro, mas apenas dos registros marcados com '0' no campo "removido".
+  * **6.1. Entrada:**
+    * Diretório do arquivo binário dos registros a se compactar;
+  * **6.2. Saída:**
+    * Os bits do arquivo binário compactado.
+  * **6.3. Erro:**
+    * "Falha no processamento do arquivo."
+
+## **[8] COMPACTAÇÃO:**
+*_por: Hugo Nakamura._*
+
+Comando que retira todos os registros removidos de um arquivo. Ele funciona a partir de uma cópia de um arquivo para outro, mas apenas dos registros marcados com '0' no campo "removido".
+  * **6.1. Entrada:**
+    * Diretório do arquivo binário dos registros a se compactar;
+  * **6.2. Saída:**
+    * Os bits do arquivo binário compactado.
+  * **6.3. Erro:**
+    * "Falha no processamento do arquivo."
+
+## **[9] COMPACTAÇÃO:**
+*_por: Hugo Nakamura._*
+
+Comando que retira todos os registros removidos de um arquivo. Ele funciona a partir de uma cópia de um arquivo para outro, mas apenas dos registros marcados com '0' no campo "removido".
+  * **6.1. Entrada:**
+    * Diretório do arquivo binário dos registros a se compactar;
+  * **6.2. Saída:**
+    * Os bits do arquivo binário compactado.
+  * **6.3. Erro:**
+    * "Falha no processamento do arquivo."
+
+## **[10] COMPACTAÇÃO:**
+*_por: Hugo Nakamura._*
+
+Comando que retira todos os registros removidos de um arquivo. Ele funciona a partir de uma cópia de um arquivo para outro, mas apenas dos registros marcados com '0' no campo "removido".
+  * **6.1. Entrada:**
+    * Diretório do arquivo binário dos registros a se compactar;
+  * **6.2. Saída:**
+    * Os bits do arquivo binário compactado.
+  * **6.3. Erro:**
+    * "Falha no processamento do arquivo."
+
 
 ---
 # **ARQUIVOS.**
