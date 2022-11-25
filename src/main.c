@@ -71,7 +71,6 @@ int main(){
             scanf("%s", nomeArquivo1);
             scanf("%s", nomeArquivo2);
             limparBuffer();
-            
             createIndex (nomeArquivo1, nomeArquivo2);
             break;
         case 8:

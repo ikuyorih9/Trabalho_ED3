@@ -9,13 +9,9 @@
 #include <string.h>
 
 void insercaoArvore(const char * nomeArquivoRegistro, const char * nomeArquivoArvore){
-    //Cria o diretório do arquivo de registros e do arquivo de índice.
-    char * diretorioRegistro = retornaDiretorio(DIR_ENTRADA, nomeArquivoRegistro);
-    char * diretorioArvore = retornaDiretorio(DIR_ENTRADA, nomeArquivoArvore);
-
     //Abre os dois arquivos para leitura e escrita binária.
-    FILE * arquivoRegistro = fopen(diretorioRegistro, "rb+");
-    FILE * arquivoArvore = fopen(diretorioArvore, "rb+");
+    FILE * arquivoRegistro = fopen(nomeArquivoRegistro, "rb+");
+    FILE * arquivoArvore = fopen(nomeArquivoArvore, "rb+");
     
     //Se algum dos arquivos não foi aberto corretamente, imprime uma mensagem de erro.
     if(arquivoRegistro == NULL || arquivoArvore == NULL){
@@ -97,10 +93,6 @@ void insercaoArvore(const char * nomeArquivoRegistro, const char * nomeArquivoAr
     fclose(arquivoArvore);
 
     //Imprime o binário dos arquivos.
-    binarioNaTela(diretorioRegistro);
-    binarioNaTela(diretorioArvore);
-
-    //Libera o diretório dos arquivos.
-    free(diretorioRegistro);
-    free(diretorioArvore);
+    binarioNaTela(nomeArquivoRegistro);
+    binarioNaTela(nomeArquivoArvore);
 }

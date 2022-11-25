@@ -10,13 +10,9 @@ char * separaCamposLinha(char * linha, int numCampo);
 int retornaValorInteiro(char * linha, int numCampo);
 
 void recuperaArvore(const char * nomeArquivoRegistro, const char * nomeArquivoArvore){
-    //Cria diretorios do arquivo de registros e do arquivo da árvore.
-    char * diretorioRegistro = retornaDiretorio(DIR_ENTRADA, nomeArquivoRegistro);
-    char * diretorioArvore = retornaDiretorio(DIR_ENTRADA, nomeArquivoArvore);
-
     //Abre o arquivo de registro e o da árvore para leitura binária.
-    FILE * arquivoRegistro = fopen(diretorioRegistro, "rb");
-    FILE * arquivoArvore = fopen(diretorioArvore, "rb");
+    FILE * arquivoRegistro = fopen(nomeArquivoRegistro, "rb");
+    FILE * arquivoArvore = fopen(nomeArquivoArvore, "rb");
     
     //Verifica erro na abertura do arquivo.
     if(arquivoRegistro == NULL || arquivoArvore == NULL){
@@ -88,6 +84,4 @@ void recuperaArvore(const char * nomeArquivoRegistro, const char * nomeArquivoAr
     }
 
     //LIBERA MEMÓRIA DA VARIÁVEL DE DIRETÓRIO.
-    free(diretorioRegistro);
-    free(diretorioArvore);
 }

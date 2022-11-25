@@ -5,17 +5,13 @@
 #include <stdlib.h>
 
 void createIndex(const char * nomeArquivoRegistro, const char * nomeArquivoIndice){
-    //Cria o diretorio do arquivo de registro a partir de seu nome.
-    char * diretorioRegistro = retornaDiretorio(DIR_ENTRADA, nomeArquivoRegistro);
 
-    //Cria o diretorio do arquivo de indice a partir do seu nome.
-    char * diretorioIndice = retornaDiretorio(DIR_SAIDA, nomeArquivoIndice);
 
     //Abre o arquivo de registro para leitura binária.
-    FILE * arquivoRegistro = fopen(diretorioRegistro, "rb");
+    FILE * arquivoRegistro = fopen(nomeArquivoRegistro, "rb");
 
     //Abre o arquivo de índice para escrita e leitura binária.
-    FILE * arquivoArvore = fopen(diretorioIndice, "wb+");
+    FILE * arquivoArvore = fopen(nomeArquivoIndice, "wb+");
     
     //Verifica a abertura dos dois arquivos.
     if(arquivoRegistro == NULL || arquivoArvore == NULL){
@@ -57,6 +53,7 @@ void createIndex(const char * nomeArquivoRegistro, const char * nomeArquivoIndic
 
         //Insere a chave e o rrnRef na árvore B. 
         insereNoArvore(chave, rrnRef, &cabecalho, arquivoArvore);
+
     }
     
     //Atualiza o cabeçalho da árvore.
@@ -68,9 +65,5 @@ void createIndex(const char * nomeArquivoRegistro, const char * nomeArquivoIndic
     fclose(arquivoArvore);
 
     //Mostra o binário dos arquivos.
-    binarioNaTela(diretorioIndice);
-
-    //Libera memória alocada para o nome dos arquivos.
-    free(diretorioRegistro);
-    free(diretorioIndice);
+    binarioNaTela(nomeArquivoIndice);
 }

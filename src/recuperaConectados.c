@@ -8,24 +8,16 @@
 #include <stdlib.h>
 
 void recuperaConectados(const char * nomeArquivo1, const char * nomeArquivo2, const char * nomeCampo1, const char * nomeCampo2, const char * nomeArquivoIndice2){
-    //Obtem os diretórios do arquivo de registro 1 e 2, além do diretório do índice do segundo arquivo de registro.
-    char * diretorioRegistro1 = retornaDiretorio(DIR_ENTRADA, nomeArquivo1);
-    char * diretorioRegistro2 = retornaDiretorio(DIR_ENTRADA, nomeArquivo2);
-    char * diretorioIndice = retornaDiretorio(DIR_ENTRADA, nomeArquivoIndice2);
-
     //Abre os três arquivos para leitura binária.
-    FILE * arquivoRegistro1 = fopen(diretorioRegistro1, "rb");
-    FILE * arquivoRegistro2 = fopen(diretorioRegistro2, "rb");
-    FILE * arquivoIndice2 = fopen(diretorioIndice, "rb");
+    FILE * arquivoRegistro1 = fopen(nomeArquivo1, "rb");
+    FILE * arquivoRegistro2 = fopen(nomeArquivo2, "rb");
+    FILE * arquivoIndice2 = fopen(nomeArquivoIndice2, "rb");
 
     //Obtém o registro de cabeçalho do primeiro arquivo de registros.
     RegCab registroCabecalho1 = retornaRegistroCabecalho(arquivoRegistro1);
     //Verifica a consistência desse arquivo.
     if(registroCabecalho1.status == '0'){
         imprimeErroArquivo();
-        free(diretorioRegistro1);
-        free(diretorioRegistro2);
-        free(diretorioIndice);
         return;
     }
 
@@ -34,9 +26,6 @@ void recuperaConectados(const char * nomeArquivo1, const char * nomeArquivo2, co
     //Verifica a consistência desse arquivo.
     if(registroCabecalho2.status == '0'){
         imprimeErroArquivo();
-        free(diretorioRegistro1);
-        free(diretorioRegistro2);
-        free(diretorioIndice);
         return;
     }
 
@@ -45,9 +34,6 @@ void recuperaConectados(const char * nomeArquivo1, const char * nomeArquivo2, co
     //Verifica a consistência desse arquivo.
     if(cabecalho.status == '0'){
         imprimeErroArquivo();
-        free(diretorioRegistro1);
-        free(diretorioRegistro2);
-        free(diretorioIndice);
         return;
     }
 
@@ -102,8 +88,4 @@ void recuperaConectados(const char * nomeArquivo1, const char * nomeArquivo2, co
     if(!registrosEncontrados)
         registroNaoAlocado();
 
-
-    free(diretorioRegistro1);
-    free(diretorioRegistro2);
-    free(diretorioIndice);
 }
