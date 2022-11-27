@@ -102,7 +102,7 @@ Comando que retira todos os registros removidos de um arquivo. Ele funciona a pa
   * **6.3. Erro:**
     * "Falha no processamento do arquivo."
 
-## **[9] INSERÇÃO ARVORE:**
+## **[9] INSERÇÃO ÁRVORE:**
 *_por: ???????._*
 
 Comando que retira todos os registros removidos de um arquivo. Ele funciona a partir de uma cópia de um arquivo para outro, mas apenas dos registros marcados com '0' no campo "removido".
