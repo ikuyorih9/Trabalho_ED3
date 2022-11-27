@@ -4,9 +4,14 @@
         Remoção Lógica [4]
         Insert Into [5]
         Compactação [6]
+        Create Index [7]
+        Recupera Arvore [8]
+        
     Mateus Santos Messias (12548000) - 100%
         Impressão de todos os registros [3]
         Select dos registros [4]
+        Incerção Arvore [9]
+        Recupera Conectados [10]
 */
 
 
