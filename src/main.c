@@ -10,7 +10,7 @@
     Mateus Santos Messias (12548000) - 100%
         Impressão de todos os registros [3]
         Select dos registros [4]
-        Inserção Arvore [9]
+        Inserção Árvore [9]
         Recupera Conectados [10]
 */
 
