@@ -31,6 +31,7 @@
 #include "recuperaArvore.h"
 #include "insercaoArvore.h"
 #include "recuperaConectados.h"
+#include "gerarGrafo.h"
 
 int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
@@ -96,6 +97,10 @@ int main(){
             scanf("%s", nomeIndice);
             recuperaConectados (nomeArquivo1, nomeArquivo2, nomeCampo1, nomeCampo2, nomeIndice);
             break;
+        case 11:
+            scanf("%s", nomeArquivo1);
+            gerarGrafo(nomeArquivo1);
+
     }
 
     return 0;

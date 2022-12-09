@@ -1,4 +1,5 @@
-all: programaTrab
+all:
+	gcc -o programaTrab ./src/*.c
 
 main.o: ./src/main.c
 	gcc -o ./src/main.o -c ./src/main.c
@@ -44,9 +45,6 @@ insercaoArvore.o: ./src/insercaoArvore.c
 
 recuperaConectados.o: ./src/recuperaConectados.c
 	gcc -o ./src/recuperaConectados.o -c ./src/recuperaConectados.c
-
-programaTrab: main.o createTable.o mensagensErro.o arquivos.o insertInto.o remocaoLogica.o compactacao.o limparBuffer.o recuperaDados.o impressaoRegistros.o arvoreB.o createIndex.o recuperaArvore.o insercaoArvore.o recuperaConectados.o
-	gcc -o programaTrab ./src/main.o ./src/createTable.o ./src/mensagensErro.o ./src/arquivos.o ./src/insertInto.o ./src/remocaoLogica.o ./src/compactacao.o ./src/limparBuffer.o ./src/recuperaDados.o ./src/impressaoRegistros.o ./src/arvoreB.o ./src/createIndex.o ./src/recuperaArvore.o ./src/insercaoArvore.o ./src/recuperaConectados.o
 
 run:
 	./programaTrab

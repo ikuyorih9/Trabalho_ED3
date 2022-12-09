@@ -30,6 +30,11 @@ void recuperaArvore(const char * nomeArquivoRegistro, const char * nomeArquivoAr
     
     //Recupera o cabeçalho do arquivo da árvore.
     ArvoreCab cabecalho = retornaCabecalhoArvore(arquivoArvore);
+    //Verifica consistência do índice. Se for '0', não está consistente.
+    if(cabecalho.status == '0'){
+        imprimeErroArquivo();
+        return;
+    }
 
     //Recebe a quantidade de iterações e limpa o buffer da leitura do scanf.
     int n;
