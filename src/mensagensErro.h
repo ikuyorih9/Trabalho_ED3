@@ -3,6 +3,7 @@
 
 void imprimeErroRRN();
 void imprimeErroArquivo();
+void imprimeErroArquivo_2();
 void registroNaoAlocado();
 void imprimeErroEscrita(int offset);
 

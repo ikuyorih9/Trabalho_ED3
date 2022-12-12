@@ -13,3 +13,7 @@ void registroNaoAlocado(){
 void imprimeErroEscrita(int offset){
     printf("Nao foi possivel escrever o arquivo (%x).\n", offset);
 }
+
+void imprimeErroArquivo_2(){
+    printf("Falha na execução da funcionalidade.\n");
+}

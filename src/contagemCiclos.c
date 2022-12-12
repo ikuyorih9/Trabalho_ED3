@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "gerarGrafo.h"
-#include "mensagensErro.h"
-#include "arquivos.h"
 #include "grafos.h"
+#include "arquivos.h"
+#include "mensagensErro.h"
 
-void gerarGrafo(const char * nomeArquivo){
+void contagemCiclos(const char * nomeArquivo){
     //Abre o arquivo binário para leitura binária.
     FILE * arquivoBin = fopen(nomeArquivo, "rb");
     if(arquivoBin == NULL){
@@ -24,12 +23,7 @@ void gerarGrafo(const char * nomeArquivo){
     for(int i = 0; i < registroCabecalho.proxRRN; i++){
         RegDados registroDados = retornaRegistroDados(i, arquivoBin);
         insereGrafo(registroDados, grafo);
-        liberaRegistroDados(registroDados);
     }
-    imprimeGrafo(grafo);
 
-    //Libera memoria do grafo!
     
-    fclose(arquivoBin);
-
 }
