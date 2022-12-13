@@ -32,6 +32,8 @@
 #include "insercaoArvore.h"
 #include "recuperaConectados.h"
 #include "gerarGrafo.h"
+#include "contagemCiclos.h"
+#include "fluxoMaximo.h"
 
 int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
@@ -100,7 +102,15 @@ int main(){
         case 11:
             scanf("%s", nomeArquivo1);
             gerarGrafo(nomeArquivo1);
-
+            break;
+        case 12:
+            scanf("%s", nomeArquivo1);
+            contagemCiclos(nomeArquivo1);
+            break;
+        case 13:
+            scanf("%s", nomeArquivo1);
+            fluxoMaximo(nomeArquivo1);
+            break;
     }
 
     return 0;

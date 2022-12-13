@@ -1,11 +1,10 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include "fluxoMaximo.h"
 #include "grafos.h"
 #include "arquivos.h"
 #include "mensagensErro.h"
-#include "contagemCiclos.h"
 
-void contagemCiclos(const char * nomeArquivo){
+void fluxoMaximo(const char * nomeArquivo){
     //Abre o arquivo binário para leitura binária.
     FILE * arquivoBin = fopen(nomeArquivo, "rb");
     if(arquivoBin == NULL){
@@ -25,19 +24,18 @@ void contagemCiclos(const char * nomeArquivo){
         RegDados registroDados = retornaRegistroDados(i, arquivoBin);
         insereGrafo(registroDados, grafo);
     }
-
-    //Percorre todo o grafo.
-    int numCiclos = 0;
-    ListaAdj * noAtual = *grafo;
-    while(noAtual != NULL){
-        if(noAtual->cor == AZUL){
-            numCiclos += procuraCiclos(noAtual, grafo);
-        }
-        noAtual = noAtual->proxNo;
-    }
-
-    printf("Quantidade de ciclos: %d\n", numCiclos);
-
-    fclose(arquivoBin);
     
+    retornaMenorVelocidade(0, 0, grafo);
+    // int n;
+    // scanf("%d", &n);
+    // for(int i = 0; i < n; i++){
+    //     int origem;
+    //     scanf("%d", &origem);
+    //     int destino;
+    //     scanf("%d", &destino);
+
+    //     retornaMenorVelocidade(origem, destino, grafo);
+
+    // }
+
 }

@@ -31,6 +31,18 @@ void insercaoArvore(const char * nomeArquivoRegistro, const char * nomeArquivoAr
         return;
     }
 
+    //Haverá mudanças no arquivo de registros e no de cabeçalho.
+    registroCabecalho.status = '0';
+    cabecalho.status = '0';
+
+    //Atualiza o cabeçalho dos registros em disco.
+    fseek(arquivoRegistro, 0, SEEK_SET);
+    fwrite(&registroCabecalho.status, sizeof(char), 1, arquivoRegistro);
+
+    //Atualiza o cabeçalho dá arvore em disco.
+    fseek(arquivoArvore, 0, SEEK_SET);
+    fwrite(&cabecalho.status, sizeof(char), 1, arquivoArvore);
+
     //Obtém a quantidade de registros a se inserir.
     int n;
     scanf("%d", &n);
@@ -38,10 +50,6 @@ void insercaoArvore(const char * nomeArquivoRegistro, const char * nomeArquivoAr
 
     //Laço que se repete 'n' vezes, onde 'n' é o número de inserções.
     for(int i = 0; i < n; i++){
-        //Procura o próximo RRN disponível no arquivo de registros.
-        int rrnDisponivel = retornaRRNRegistroDisponivel(&registroCabecalho, arquivoRegistro);
-
-        int offset =  TAM_PAG + rrnDisponivel*TAM_REG_DADOS;
         
         //Lê a linha de entrada da funcionalidade.
         char linha[128];
@@ -59,25 +67,32 @@ void insercaoArvore(const char * nomeArquivoRegistro, const char * nomeArquivoAr
         registroDados.nomePoPs = retornaValorString(linha, 1);
         registroDados.nomePais = retornaValorString(linha, 2);
         
+        //Procura o próximo RRN disponível no arquivo de registros.
+        int rrnDisponivelRegistro = retornaRRNRegistroDisponivel(&registroCabecalho, arquivoRegistro);
+        
+        //Calcula o offset do rrn.
+        int offset =  TAM_PAG + rrnDisponivelRegistro*TAM_REG_DADOS;
+
+
         //Insere o registro de dados no arquivo de registros.
         insereRegistroDados(offset, registroDados, arquivoRegistro);
 
         //Insere um nó ná arvore no arquivo de índices.
-        insereNoArvore(registroDados.idConecta, rrnDisponivel, &cabecalho, arquivoArvore);
+        insereNoArvore(registroDados.idConecta, rrnDisponivelRegistro, &cabecalho, arquivoArvore);
 
         int proxRRN = registroCabecalho.proxRRN;
         //SE O rrnDisponivel < proxRRN ENTÃO FOI INSERIDO EM UM REMOVIDO.
-        if(rrnDisponivel < proxRRN)
-            registroCabecalho.nRegRem--;
-        //SENÃO, FOI INSERIDO ONDE APONTAVA O proxRRN.
-        else{
-            registroCabecalho.proxRRN++;
-            //ATUALIZA nPagDisco SE NECESSÁRIO.
-            int nPagDisco =  retornaNumPaginasDisco(registroCabecalho.proxRRN);
-            nPagDisco++;
-            if(nPagDisco != registroCabecalho.nPagDisco)
-                registroCabecalho.nPagDisco = nPagDisco;
-        }
+        // if(rrnDisponivel < proxRRN)
+        //     registroCabecalho.nRegRem--;
+        // //SENÃO, FOI INSERIDO ONDE APONTAVA O proxRRN.
+        // else{
+        //     registroCabecalho.proxRRN++;
+        //     //ATUALIZA nPagDisco SE NECESSÁRIO.
+        //     int nPagDisco =  retornaNumPaginasDisco(registroCabecalho.proxRRN);
+        //     nPagDisco++;
+        //     if(nPagDisco != registroCabecalho.nPagDisco)
+        //         registroCabecalho.nPagDisco = nPagDisco;
+        // }
 
         //LIBERA VARIÁVEIS ALOCADAS DINAMICAMENTE NO REGISTRO DE DADOS.
         liberaRegistroDados(registroDados);

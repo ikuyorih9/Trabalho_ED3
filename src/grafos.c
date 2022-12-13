@@ -12,10 +12,7 @@ void imprimeGrafo(Grafo * grafo){
     ListaAdj * noAtualAdj = *grafo;
     while(noAtualAdj != NULL){
         ListaLinear * noAtualLin = noAtualAdj->raizListaLinear;
-        // if(noAtualLin == NULL){
-        //     noAtualAdj = noAtualAdj->proxNo;
-        //     continue;
-        // }
+        //aresta * arestaAtual = *(atual->raizLista);
         
         while(noAtualLin != NULL){
             printf("%d ", noAtualAdj->idConecta);
@@ -44,6 +41,30 @@ Grafo * criaGrafo(){
     return grafo;
 }
 
+void imprimeCor(Grafo * grafo){
+    ListaAdj * noAtual = *grafo;
+    while(noAtual!=NULL){
+        imprimeListaAdj(noAtual);
+        printf("vertice: %d - ", noAtual->idConecta);
+        switch(noAtual->cor){
+            case 0:
+                printf("AZUL\n");
+                break;
+            case 1:
+                printf("VERDE\n");
+                break;
+            case 2:
+                printf("VERMELHO\n");
+                break;
+            default:
+                printf("erro: %d\n", noAtual->cor);
+                break;
+        }
+        noAtual = noAtual->proxNo;
+    }
+    printf("---------------------\n");
+}
+
 ListaAdj * criaNoListaAdj(int idConecta, char * nomePoPs, char * nomePais, char * siglaPais){
     ListaAdj * listaAdj = malloc(sizeof(ListaAdj));
     listaAdj->idConecta = idConecta;
@@ -51,9 +72,8 @@ ListaAdj * criaNoListaAdj(int idConecta, char * nomePoPs, char * nomePais, char 
     strcpy(listaAdj->nomePais, nomePais);
     strcpy(listaAdj->siglaPais, siglaPais);
     listaAdj->estaDefinido = 1;
-    listaAdj->visitado = 0;
+    listaAdj->cor = AZUL;
     listaAdj->raizListaLinear = NULL;
-    listaAdj->AcessadoPor = NULL;
     listaAdj->proxNo = NULL;
     listaAdj->anteNo = NULL;
     return listaAdj;
@@ -86,6 +106,7 @@ void insereGrafo(RegDados registroDados, Grafo * grafo){
             ListaAdj * noIndefinido = malloc(sizeof(ListaAdj));
             noIndefinido->idConecta = noListaLinear->idPoPsConectado;
             noIndefinido->estaDefinido = 0;
+            noIndefinido->cor = AZUL;
             noIndefinido->raizListaLinear = noLinearIndefinido;
             noIndefinido->anteNo = NULL;
             noIndefinido->proxNo = NULL;
@@ -121,6 +142,7 @@ void insereGrafo(RegDados registroDados, Grafo * grafo){
                 ListaAdj * noIndefinido = malloc(sizeof(ListaAdj));
                 noIndefinido->idConecta = noListaLinear->idPoPsConectado;
                 noIndefinido->estaDefinido = 0;
+                noIndefinido->cor = AZUL;
                 noIndefinido->raizListaLinear = noLinearIndefinido;
                 noIndefinido->anteNo = NULL;
                 noIndefinido->proxNo = NULL;
@@ -150,6 +172,7 @@ void insereGrafo(RegDados registroDados, Grafo * grafo){
                 ListaAdj * noIndefinido = malloc(sizeof(ListaAdj));
                 noIndefinido->idConecta = noListaLinear->idPoPsConectado;
                 noIndefinido->estaDefinido = 0;
+                noIndefinido->cor = AZUL;
                 noIndefinido->raizListaLinear = noLinearIndefinido;
                 noIndefinido->anteNo = NULL;
                 noIndefinido->proxNo = NULL;
@@ -180,6 +203,7 @@ void insereGrafo(RegDados registroDados, Grafo * grafo){
     ListaAdj * noIndefinido = malloc(sizeof(ListaAdj));
     noIndefinido->idConecta = noListaLinear->idPoPsConectado;
     noIndefinido->estaDefinido = 0;
+    noIndefinido->cor = AZUL;
     noIndefinido->raizListaLinear = noLinearIndefinido;
     noIndefinido->anteNo = NULL;
     noIndefinido->proxNo = NULL;
@@ -258,57 +282,81 @@ ListaAdj * buscaNoListaAdj(int idConecta, Grafo * grafo){
     return NULL;
 }
 
-int procuraCiclos(ListaAdj * noInicio, Grafo * grafo){
-    if(grafo == NULL){
-        fprintf(stderr, "Nao ha memoria alocada para esse grafo.\n");
-        return;
-    }
-
-    if(*grafo == NULL){
-        fprintf(stderr, "A lista de adjacencias esta vazia.\n");
-        return;
-    }
-    
-    //Prepara todos os vertices como não visitados para iniciar a busca.
-    ListaAdj * verticeAtual = *grafo;
-    while(verticeAtual != NULL){
-        liberaListaEncadeada(verticeAtual->AcessadoPor);
-        verticeAtual->AcessadoPor = NULL;
-        verticeAtual->visitado = 0;
-    }
-    int numCiclos = 0;
-    encontraCiclo(noInicio, noInicio->idConecta, &numCiclos, grafo);
-    return numCiclos;
-}
-
-void encontraCiclo(ListaAdj * vertice, int verticeInicio, int * numCiclos, Grafo * grafo){
-    //Vértice atual foi visitado.
-    vertice->visitado = 1;
+void encontraCiclo(ListaAdj * vertice, int * numCiclos, Grafo * grafo){
+    //Vértice atual foi visitado, ele é VERMELHO.
+    vertice->cor = VERDE;
     //Recebe os vértices conectados ao vértice atual.
     ListaLinear * verticeConectado = vertice->raizListaLinear;
 
     while(verticeConectado != NULL){
         ListaAdj * proxVertice = buscaNoListaAdj(verticeConectado->idPoPsConectado, grafo);
-        if(proxVertice == NULL)
-            return;
-        
-        inserirListaEncadeada(vertice->idConecta, proxVertice->AcessadoPor);
-
         //Se o vertice foi visitado, verifica se é o início do ciclo.
-        if(proxVertice->visitado){
-            if(proxVertice->idConecta == verticeInicio)
-                //Se encontrou o vértice de início, aumenta o número de ciclos.
-                *numCiclos++;
+        if(proxVertice->cor != AZUL){
+            if(proxVertice->cor == VERMELHO)
+                (*numCiclos)++;
             verticeConectado = verticeConectado->proxNo;
             continue;
         }
-        
-        encontraCiclo(proxVertice, verticeInicio, numCiclos, grafo);
+        encontraCiclo(proxVertice, numCiclos, grafo);
         verticeConectado = verticeConectado->proxNo;
     }
+    vertice->cor = VERMELHO;
+
     return;
 }
 
+int procuraCiclos(ListaAdj * noInicio, Grafo * grafo){
+    if(grafo == NULL){
+        fprintf(stderr, "Nao ha memoria alocada para esse grafo.\n");
+        return -1;
+    }
+
+    if(*grafo == NULL){
+        fprintf(stderr, "A lista de adjacencias esta vazia.\n");
+        return -1;
+    }
+    
+    int numCiclos = 0;
+    encontraCiclo(noInicio, &numCiclos, grafo);
+    return numCiclos;
+}
+
+int retornaMenorVelocidade(int origem, int destino, Grafo * grafo){
+    if(grafo == NULL){
+        fprintf(stderr, "Nao ha memoria alocada para esse grafo.\n");
+        return -1;
+    }
+
+    if(*grafo == NULL){
+        fprintf(stderr, "A lista de adjacencias esta vazia.\n");
+        return -1;
+    }
+
+    //Cria a pilha de vertices.
+    ListaEncadeada * listaMenorCaminho = criaListaEncadeada();
+    ListaAdj * verticeAtual = *grafo;
+    while(verticeAtual != NULL){
+        int idConecta = verticeAtual->idConecta;
+        inserirFimListaEncadeada(-1, listaMenorCaminho);
+        verticeAtual = verticeAtual->proxNo;
+    }
+
+    ListaAdj * verticeInicio = buscaNoListaAdj(origem, grafo);
+    retornaMenorCaminho(verticeInicio, grafo);
+
+}
+
+int retornaMenorCaminho(ListaAdj * verticeInicio, ListaEncadeada * lista, Grafo * grafo){
+    if(verticeInicio != NULL){
+        fprintf(stderr, "Vertice de partida nao esta alocado.\n");
+        return -1;
+    }
+    mudaValorListaEncadeada(verticeInicio->idConecta, 0, lista);
+    ListaLinear * verticeConectado = verticeInicio->raizListaLinear;
+    while(verticeConectado != NULL){
+        
+    }
+} 
 
 /*******************************
     Métodos da Lista Linear.
