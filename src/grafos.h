@@ -39,23 +39,37 @@ struct noListaLinear{
     ListaLinear * proxNo;
 };
 
-
 typedef ListaAdj* Grafo;
 
-void imprimeGrafo(Grafo * grafo);
+/*********************
+    Métodos do Grafo.
+**********************/
 
 Grafo * criaGrafo();
-ListaLinear * criaNoListaLinear(int idPoPsConectado, int velocidade);
+void imprimeGrafo(Grafo * grafo);
+void insereGrafo(RegDados registroDados, Grafo * grafo);
+void liberaGrafo(Grafo * grafo);
+
+/************************************
+    Métodos da Lista de Adjacências.
+*************************************/
+
+ListaAdj * buscaNoListaAdj(int idConecta, Grafo * grafo);
 ListaAdj * criaNoListaAdj(int idConecta, char * nomePoPs, char * nomePais, char * siglaPais);
 void imprimeListaAdj(ListaAdj * listaAdj);
 void insereNoListaAdj(ListaAdj * noListaAdj, Grafo * grafo);
-void insereGrafo(RegDados registroDados, Grafo * grafo);
-ListaAdj * buscaNoListaAdj(int idConecta, Grafo * grafo);
+void liberaListaAdj(ListaAdj * listaAdj);
 int procuraCiclos(ListaAdj * noInicio, Grafo * grafo);
-void imprimeCor(Grafo * grafo);
 int retornaMenorVelocidade(int origem, int destino, Grafo * grafo);
+int procuraMaiorFluxo(int origem, int destino, Grafo * grafo);
 
+/*******************************
+    Métodos da Lista Linear.
+********************************/
 
+ListaLinear * criaNoListaLinear(int idPoPsConectado, int velocidade);
 void insereNoListaLinear(ListaLinear * no, ListaAdj * listaAdj);
 void imprimeListaLinear(ListaLinear * no);
+void liberaListaLinear(ListaLinear * listaLinear);
+
 #endif

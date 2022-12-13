@@ -1,10 +1,11 @@
 #include <stdio.h>
-#include "fluxoMaximo.h"
+#include <stdlib.h>
+#include "menorVelocidade.h"
 #include "grafos.h"
 #include "arquivos.h"
 #include "mensagensErro.h"
 
-void fluxoMaximo(const char * nomeArquivo){
+void menorVelocidade(const char * nomeArquivo){
     //Abre o arquivo binário para leitura binária.
     FILE * arquivoBin = fopen(nomeArquivo, "rb");
     if(arquivoBin == NULL){
@@ -32,12 +33,15 @@ void fluxoMaximo(const char * nomeArquivo){
         scanf("%d", &origem);
         int destino;
         scanf("%d", &destino);
-
-        int maiorFluxo = procuraMaiorFluxo(origem, destino, grafo);
-        if(maiorFluxo != -1)
-            printf("Fluxo máximo entre %d e %d: %dMbps\n", origem, destino, maiorFluxo);
+        int parada;
+        scanf("%d", &parada);
+        int parada1 = retornaMenorVelocidade(origem, parada, grafo);
+        int parada2 = retornaMenorVelocidade(parada, destino, grafo);
+        int menorVelocidade = parada1 + parada2;
+        if(parada1 == -1 || parada2 == -1)
+            printf("Comprimento do caminho entre %d e %d parando em %d: -1\n", origem, destino, parada);
         else
-            printf("Fluxo máximo entre %d e %d: -1\n", origem, destino);
-    }   
+            printf("Comprimento do caminho entre %d e %d parando em %d: %dMbps\n", origem, destino, parada, menorVelocidade);
+    }
 
 }

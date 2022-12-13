@@ -34,6 +34,7 @@
 #include "gerarGrafo.h"
 #include "contagemCiclos.h"
 #include "fluxoMaximo.h"
+#include "menorVelocidade.h"
 
 int main(){
     //FILE* in = fopen("../in/topologiaRede.csv","r");
@@ -110,6 +111,10 @@ int main(){
         case 13:
             scanf("%s", nomeArquivo1);
             fluxoMaximo(nomeArquivo1);
+            break;
+        case 14:
+            scanf("%s", nomeArquivo1);
+            menorVelocidade(nomeArquivo1);
             break;
     }
 

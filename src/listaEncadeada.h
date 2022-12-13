@@ -17,6 +17,8 @@ typedef struct {
 
 ListaEncadeada *criaListaEncadeada();
 NoLista *criaNoListaEncadeada(int valor);
+int estaNaListaEncadeada(int valor, ListaEncadeada * lista);
+int buscaListaEncadeada(int indice, ListaEncadeada * lista);
 void mudaValorListaEncadeada(int indice, int valor, ListaEncadeada *lista);
 void inserirListaEncadeada(int valor, ListaEncadeada *lista);
 void inserirFimListaEncadeada(int valor, ListaEncadeada *lista) ;

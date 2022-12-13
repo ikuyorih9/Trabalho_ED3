@@ -22,6 +22,39 @@ NoLista *criaNoListaEncadeada(int valor) {
   return no;
 }
 
+int estaNaListaEncadeada(int valor, ListaEncadeada * lista){
+  if (lista == NULL) {
+    fprintf(stderr, "Nao ha memoria alocada para a lista encadeada.\n");
+    return -1;
+  }
+
+  NoLista * noAtual = lista->listaEncadeada;
+  while(noAtual != NULL){
+    if(noAtual->dado == valor){
+      return 1;
+    }
+    noAtual = noAtual -> proxNo;
+  }
+  return 0;
+}
+
+int buscaListaEncadeada(int indice, ListaEncadeada * lista){
+  if (lista == NULL) {
+    fprintf(stderr, "Nao ha memoria alocada para a lista encadeada.\n");
+    return -1;
+  }
+
+  NoLista * noAtual = lista->listaEncadeada;
+  while(noAtual != NULL){
+    if(noAtual->indice == indice){
+      return noAtual->dado;
+    }
+    noAtual = noAtual -> proxNo;
+  }
+  return -1;
+
+}
+
 void inserirOrdenadoListaEncadeada(int valor, ListaEncadeada *lista) {
   if (lista == NULL) {
     fprintf(stderr, "Nao ha memoria alcoada para a lista encadeada.\n");
@@ -69,15 +102,16 @@ void inserirOrdenadoListaEncadeada(int valor, ListaEncadeada *lista) {
 
 void mudaValorListaEncadeada(int indice, int valor, ListaEncadeada *lista){
   if (lista == NULL) {
-    fprintf(stderr, "Nao ha memoria alcoada para a lista encadeada.\n");
+    fprintf(stderr, "Nao ha memoria alocada para a lista encadeada.\n");
     return;
   }
   NoLista * noAtual = lista->listaEncadeada;
   while(noAtual != NULL){
     if(noAtual->indice == indice){
-      noAtual->valor = valor;
+      noAtual->dado = valor;
       return;
     }
+    noAtual = noAtual->proxNo;
   }
   printf("Nao ha indice com esse valor.\n");
 }
@@ -91,8 +125,8 @@ void inserirFimListaEncadeada(int valor, ListaEncadeada *lista) {
   if (lista->listaEncadeada == NULL) {
     NoLista *no = criaNoListaEncadeada(valor);
     lista->listaEncadeada = no;
-    lista->listaEncadeada->indice = lista->tamLista;
     lista->tamLista++;
+    lista->listaEncadeada->indice = lista->tamLista;
     return;
   }
 
@@ -104,8 +138,8 @@ void inserirFimListaEncadeada(int valor, ListaEncadeada *lista) {
   NoLista *no = criaNoListaEncadeada(valor);
   noAtual->proxNo = no;
   no->anteNo = noAtual;
-  no->indice = lista->tamLista;
   lista->tamLista++;
+  no->indice = lista->tamLista;
 
   return;
 }
