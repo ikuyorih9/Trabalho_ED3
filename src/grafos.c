@@ -19,79 +19,147 @@ Grafo * criaGrafo(){
     return grafo;
 }
 
+//Imprime o grafo.
 void imprimeGrafo(Grafo * grafo){
+    //Se não há grafo alocado, então retorna.
     if(grafo == NULL)
         return;
+    
+    //Cria um nó de ListaAdj auxiliar, começando da raiz do grafo.
     ListaAdj * noAtualAdj = *grafo;
+
+    //Para cada nó de ListaAdj no grafo.
     while(noAtualAdj != NULL){
+        //Cria um nó de ListaLinear e recebe a raiz do nó de ListaAdj atual.
         ListaLinear * noAtualLin = noAtualAdj->raizListaLinear;
-        //aresta * arestaAtual = *(atual->raizLista);
         
+        //Para cada nó de ListaLinear
         while(noAtualLin != NULL){
+            //Imprime o idConecta do atual nó de ListaAdj
             printf("%d ", noAtualAdj->idConecta);
+            //Imprime o nomePoPs do atual nó de ListaAdj
             printf("%s ", noAtualAdj->nomePoPs);
+            //Imprime o nomePais do atual nó de ListaAdj
             printf("%s ", noAtualAdj->nomePais);
+            //Imprime a siglaPais do atual nó de ListaAdj
             printf("%s ", noAtualAdj->siglaPais);
+            //Imprime o idPoPsConectado do atual nó de ListaLinear
             printf("%d ", noAtualLin->idPoPsConectado);
+            //Imprime a velocidade do atual nó de ListaLinear
             printf("%dMbps\n", noAtualLin->velocidade);
+
+            //Aponta para o próximo nó de ListaLinear
             noAtualLin = noAtualLin->proxNo;
         }
+
+        //Aponta para o próximo nó de ListaAdj.
         noAtualAdj = noAtualAdj->proxNo;
     }
 }
 
+//Insere um registro 'registroDados' num grafo 'grafo'.
 void insereGrafo(RegDados registroDados, Grafo * grafo){
+    //Se não há grafo alocado, então retorna.
     if(grafo == NULL)
         return;
     
+    //Se a unidade de medida estiver em Giga, converte para Mega.
     if(registroDados.unidadeMedida[0] == 'G'){
         registroDados.velocidade *= 1024;
         registroDados.unidadeMedida[0] = 'M';
     }
+
+    //Cria uma variável que representa um nó da ListaLinear.
     ListaLinear * noListaLinear = NULL;
+
+    //Cria um nó de ListaAdj a partir dos dados do registro.
     ListaAdj * noListaAdj = criaNoListaAdj(registroDados.idConecta, registroDados.nomePoPs, registroDados.nomePais, registroDados.siglaPais);
+
+    //Se houver velocidade no registro, então cria um nó de ListaLinear.
     if(registroDados.velocidade != -1)
+        //Atribui ao noListaLinear um nó criado a partir dos dados do registro.
         noListaLinear = criaNoListaLinear(registroDados.idPoPsConectado, registroDados.velocidade);
     
+    //Se não há uma lista de adjacências no grafo.
     if(*grafo == NULL){
+        //A raiz de grafo se torna o nó de ListaAdj criado a partir do registro.
         *grafo = noListaAdj;
+
+        //Insere o nó de ListaLinear na raiz do grafo.
         insereNoListaLinear(noListaLinear, *grafo);
+
+        //Se houver lista linear, então se cria um novo vértice a partir do idPoPsConectado. Entretanto, esse vértice é indefinido por não haver informações além do idConecta.
         if(noListaLinear != NULL){
+            //Cria um nó de ListaLinear indefinido, alocando memória.
             ListaLinear * noLinearIndefinido = malloc(sizeof(ListaLinear));
 
+            //Faz com que o idPoPsConectado da ListaLinear indefinida seja o idConecta do nó de ListaAdj atual.
             noLinearIndefinido->idPoPsConectado = noListaAdj->idConecta;
+            //A velocidade da aresta que liga ambos os vértices são iguais.
             noLinearIndefinido->velocidade = noListaLinear->velocidade;
+
+            //Define um nó sem anterior e posterior.
             noLinearIndefinido->anteNo = NULL;
             noLinearIndefinido->proxNo = NULL;
 
+
+            //Cria um nó indefinido de ListaAdj, alocando memória.
             ListaAdj * noIndefinido = malloc(sizeof(ListaAdj));
+
+            //Faz com que o idConecta do nó indefinido de ListaAdj seja o idPoPsConectado da ListaLinear recebida pelo registro.
             noIndefinido->idConecta = noListaLinear->idPoPsConectado;
+
+            //Esse novo vértice não está definido.
             noIndefinido->estaDefinido = 0;
+
+            //Sua cor começa como AZUL.
             noIndefinido->cor = AZUL;
+
+            //A raiz do nóIndefinido de ListaAdj é o noLinearIndefinido de ListaLinear.
             noIndefinido->raizListaLinear = noLinearIndefinido;
+
+            //Indica que não há anteriores ou posteriores a esse nó.
             noIndefinido->anteNo = NULL;
             noIndefinido->proxNo = NULL;
 
+            //Insere esse nó na lista de adjacências do grafo.
             insereNoListaAdj(noIndefinido, grafo);
         }
         return;
     }
 
+    //Flag de parada do laço de repetição.
     int fimLista = 0;
+
+    //Nó de ListaAdj que recebe todos os nós da lista de adjacências.
     ListaAdj * noAtual = *grafo;
     
+    //Percorre enquanto não for o fim da lista de adjacências.
     while(!fimLista){
+        //Recebe o idConecta do nó da lista de adjacências que se deseja inserir.
         int idConecta = noListaAdj->idConecta;
+
+        //Se esse idConecta for menor que o idConecta do nó atual, então deve-se ordená-lo.
         if(idConecta < noAtual->idConecta){
+            //O próximo nó do nó que se deseja inserir é o nó atualmente lido ma lista.
             noListaAdj->proxNo = noAtual;
+            //Seu anterior é nó anterior ao nó atualmente lido.
             noListaAdj->anteNo = noAtual->anteNo;
+            //Se não houver nó anterior, então o nó inserido é a raiz da lista de adjacências.
             if(noListaAdj->anteNo == NULL)
+                //A raiz do grafo é o nó inserido.
                 *grafo = noListaAdj;
+            //Se houver nó anterior do nó atualmente lido.
             if(noAtual->anteNo != NULL)
+                //O próximo do nó do nó anterior ao nó atual é o nó inserido.
                 noAtual->anteNo->proxNo = noListaAdj;
+            //O nó anterior do nó atual é o nó inserido.
             noAtual->anteNo = noListaAdj;
             
+            //Insere no nó de ListaLinear criada a partir do registro na lista linear do nó da lista de adjacências.
             insereNoListaLinear(noListaLinear, noListaAdj);
+
+            //Cria um nó de ListaAdj e um nó de ListaLinear indefinidos com as informações da lista linear. Da mesma forma que ocorreu anteriormente.
             if(noListaLinear != NULL){
                 ListaLinear * noLinearIndefinido = malloc(sizeof(ListaLinear));
 
@@ -110,18 +178,28 @@ void insereGrafo(RegDados registroDados, Grafo * grafo){
 
                 insereNoListaAdj(noIndefinido, grafo);
             }
+
+            //Como o nó foi inserido na posição correta, retorna.
             return;
         }
+        //Caso ocorra o encontro do vértice a se inserir e o vértice atual.
         else if(idConecta == noAtual->idConecta){
+            //Verifica se o no atual está indefinido.
             if(!noAtual->estaDefinido){
+                //Se estiver, copia as informações do nó a se inserir pro nó atual, sem criar um novo vértice.
                 strcpy(noAtual->nomePoPs, noListaAdj->nomePoPs);
                 strcpy(noAtual->nomePais, noListaAdj->nomePais);
                 strcpy(noAtual->siglaPais, noListaAdj->siglaPais);
+                //Configura o nó como definido, para que não entre de novo aqui.
                 noAtual->estaDefinido = 1;
             }
+            //Insere o nó da lista linear obtido na lista linear do nó encontrado na busca.
             insereNoListaLinear(noListaLinear, noAtual);
+
+            //Libera o noListaAdj criado anteriormente, pois o nó já existia.
             free(noListaAdj);
 
+            //Cria um nó de ListaAdj e um nó de ListaLinear indefinidos com as informações da lista linear. Da mesma forma que ocorreu anteriormente.
             if(noListaLinear != NULL){
                 ListaLinear * noLinearIndefinido = malloc(sizeof(ListaLinear));
 
@@ -140,21 +218,30 @@ void insereGrafo(RegDados registroDados, Grafo * grafo){
 
                 insereNoListaAdj(noIndefinido, grafo);
             }
-
+            //Como o nó foi inserido na posição correta, retorna.
             return;
         }
-
+        //Avança pro próximo nó se o próximo nó não for nulo.
         if(noAtual->proxNo != NULL)
             noAtual = noAtual->proxNo;
+        //Caso o próximo nó seja nulo, altera a flag para o fim da lista.
         else
             fimLista = 1;
     }
 
+    //Se toda alista foi percorrida e não foi possível encontrar uma posição certa para os nós que desejamos inserir, então ele deve ser inserido no fim da lista.
+    //Nesse ponto do código, o noAtual está referenciado como o último nó da lista de adjacências do grafo.
+
+    //O próximo nó do nó atual é o nó a se inserir.
     noAtual->proxNo = noListaAdj;
+    //O nó anterior do nó a se inserir é o nó atual.
     noListaAdj->anteNo = noAtual;
+    //Como o nó inserido é o último, não há próximo nó.
     noListaAdj->proxNo = NULL;
+    //Insere a lista linear criada pelo registro na lista linear do nó.
     insereNoListaLinear(noListaLinear, noListaAdj);
 
+    //Cria um nó de ListaAdj e um nó de ListaLinear indefinidos com as informações da lista linear. Da mesma forma que ocorreu anteriormente.
     ListaLinear * noLinearIndefinido = malloc(sizeof(ListaLinear));
     noLinearIndefinido->idPoPsConectado = noListaAdj->idConecta;
     noLinearIndefinido->velocidade = noListaLinear->velocidade;
@@ -174,10 +261,14 @@ void insereGrafo(RegDados registroDados, Grafo * grafo){
     return;
 }
 
+//Libera a memória alocada para o grafo, junto as suas listas.
 void liberaGrafo(Grafo * grafo){
+    //Se não há grafo, então retorna.
     if(grafo == NULL)
         return;
+    //Libera a lista de adjacencias no grafo.
     liberaListaAdj(*grafo);
+    //Libera memória do grafo.
     free(grafo);
     return;
 }
